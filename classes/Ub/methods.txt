@@ -1,0 +1,11 @@
+#confirm					Ub.Callback.Confirm
+ping						Ub.Callback.Ping
+banExpired					Ub.Callback.AddUser
+addUser						Ub.Callback.AddUser
+bindChat					Ub.Callback.Bind
+subscribeSignals			Ub.Callback.Bind
+deleteMessages				Ub.Callback.DeleteMessages
+printBookmark				Ub.Callback.PrintBookmark
+forbiddenLinks				Ub.Callback.ForbiddenLinks
+sendSignal					Ub.Callback.SendSignal
+hireApi						Ub.Callback.HireApi
