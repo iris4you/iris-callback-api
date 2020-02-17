@@ -151,6 +151,10 @@ class UbVkApi {
 		curl_setopt($cUrl,CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($cUrl,CURLOPT_TIMEOUT, 2);
 		curl_setopt($cUrl,CURLOPT_FOLLOWLOCATION, true);
+#		curl_setopt($cUrl,CURLOPT_PROXY, "тут_прокси_и_:порт"); 
+#		curl_setopt($cUrl,CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5); 
+		curl_setopt($cUrl,CURLOPT_SSL_VERIFYPEER, 0);
+		curl_setopt($cUrl,CURLOPT_SSL_VERIFYHOST, 0);
 		if ($data) {
 			curl_setopt($cUrl, CURLOPT_POST, 1);
 			curl_setopt($cUrl, CURLOPT_POSTFIELDS, $data);
