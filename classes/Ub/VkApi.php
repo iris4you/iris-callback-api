@@ -115,6 +115,14 @@ class UbVkApi {
 	}
 
 
+	public function getChat($chatId, $fields = null) {
+		$options = [];
+			$options[] = 'chat_id=' . $chatId;
+		if ($fields)
+			$options[] = 'fields=' . $fields;
+		return $this->vkRequest('messages.getChat', implode('&', $options));
+	}
+
 	public function usersGet($users = null, $fields = null) {
 		$options = [];
 		if ($users && count($users))
