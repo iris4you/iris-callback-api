@@ -9,6 +9,7 @@ class UbCallbackSendSignal implements UbCallbackAction {
 
 		$vk = new UbVkApi($userbot['token']);
 		$vk->chatMessage($chatId, 'Мне прислали сигнал. От пользователя @id' . $object['from_id'], ['disable_mentions' => 1]);
+		echo 'ok';
 	}
 
 }
