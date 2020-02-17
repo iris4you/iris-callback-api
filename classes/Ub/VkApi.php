@@ -77,7 +77,10 @@ class UbVkApi {
 		      $this->areFriends=(isset($res['response']))?(int)$res['response'][0]['friend_status']:0;
 
 	    if ($this->areFriends===2) {
-		      $this->areFriends = AddFriendsById($id);
+		      $add = $this->vkRequest('friends.add', 'user_id='.$id);
+		                      sleep(2); 
+		      $res = $this->vkRequest('friends.areFriends', 'user_ids='.$id);
+		      $this->areFriends=(isset($res['response']))?(int)$res['response'][0]['friend_status']:0;
 	    }
 
 	    return $this->areFriends;
@@ -97,13 +100,15 @@ class UbVkApi {
 	    }
 
 	    if ($this->areFriends===false) {
-		      $this->areFriends = areFriendsById($id);
+		      $res = $this->vkRequest('friends.areFriends', 'user_ids='.$id);
+		      $this->areFriends=(isset($res['response']))?(int)$res['response'][0]['friend_status']:0;
 	    }
 
-	    if ($this->areFriend s=== 2 || $this->areFriends === 0) {
+	    if ($this->areFriends=== 2 || $this->areFriends === 0) {
 		      $add = $this->vkRequest('friends.add', 'user_id='.$id);
 		                      sleep(2); 
-		      $this->areFriends = $this->areFriendsById($id);
+		      $res = $this->vkRequest('friends.areFriends', 'user_ids='.$id);
+		      $this->areFriends=(isset($res['response']))?(int)$res['response'][0]['friend_status']:0;
 	    }
 
 	    return $this->areFriends;
