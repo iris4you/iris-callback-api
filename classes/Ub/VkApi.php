@@ -55,9 +55,58 @@ define('VK_BOT_ERROR_CONTACT_NOT_FOUND', 936);
 class UbVkApi {
 
 	var $token;
+	var $areFriends = false;
 
 	public function __construct($token) {
 		$this->token = $token;
+	}
+
+	public function areFriendsById($id = false) {
+                                 $id = (int) $id;
+	    if ($id == 0) {
+		   $this->areFriends=0;
+	    return $this->areFriends;
+	    }
+
+	    if ($id < 0) {
+		   $this->areFriends=-1;
+	    return $this->areFriends;
+	    }
+
+		      $res = $this->vkRequest('friends.areFriends', 'user_ids='.$id);
+		      $this->areFriends=(isset($res['response']))?(int)$res['response'][0]['friend_status']:0;
+
+	    if ($this->areFriends===2) {
+		      $this->areFriends = AddFriendsById($id);
+	    }
+
+	    return $this->areFriends;
+
+	}
+
+	public function AddFriendsById($id = false) {
+                                 $id = (int) $id;
+	    if ($id == 0) {
+		   $this->areFriends=0;
+	    return $this->areFriends;
+	    }
+
+	    if ($id < 0) {
+		   $this->areFriends=-1;
+	    return $this->areFriends;
+	    }
+
+	    if ($this->areFriends===false) {
+		      $this->areFriends = areFriendsById($id);
+	    }
+
+	    if ($this->areFriend s=== 2 || $this->areFriends === 0) {
+		      $add = $this->vkRequest('friends.add', 'user_id='.$id);
+		                      sleep(2); 
+		      $this->areFriends = $this->areFriendsById($id);
+	    }
+
+	    return $this->areFriends;
 	}
 
 	public function messagesSearch($q, $peerId = null, $count = 10) {
