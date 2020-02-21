@@ -26,4 +26,4 @@
 
 "printBookmark" - Ub.Callback.PrintBookmark - сигнал о необходимости показать сообщение из истории
 
-Подробное описание структуры сигналов в статье https://vk.com/@iris_live-api2
+Подробное описание структуры сигналов в статье https://vk.com/@iris_cm-api2
