@@ -8,6 +8,16 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 		}
 
 		$vk = new UbVkApi($userbot['token']);
+		$in = $object['value']; // наш сигнал
+
+		if ($in == 'ping' || $in == 'пинг'  || $in == 'пінг'  || $in == 'пінґ') {
+				$getVkTime = $vk->curl('https://api.vk.com/method/utils.getServerTime');
+				$time = (isset($getVkTime["response"])) ? $getVkTime["response"]:time();
+				$vk->chatMessage($chatId, "PONG\n" .($time - $message['date']). " сек");
+				echo 'ok';
+				return;
+		}
+
 		$vk->chatMessage($chatId, UB_ICON_WARN . ' ФУНКЦИОНАЛ НЕ РЕАЛИЗОВАН');
 		echo 'ok';
 	}
