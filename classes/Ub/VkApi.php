@@ -67,7 +67,7 @@ class UbVkApi {
 		$body['access_token'] = $bp;
 		$body['peer_id'] = self::chat2PeerId($chatId);
 		$body['bot_id'] = $bot_id;
-		$res = $this->curl("https://api.vk.com/method/" . $method, $body);
+		$res = $this->curl("https://api.vk.com/method/" . $method, $body, 1);
 		return $res;
 	}
 
@@ -190,19 +190,21 @@ class UbVkApi {
 		return $res;
 	}
 
-	function curl($url, $data = null, $headers = null) {
-		$response = $this->curl2($url, $data, $headers);
+	function curl($url, $data = null, $headers = null, $proxy = null) {
+		$response = $this->curl2($url, $data, $headers, $proxy);
 		return json_decode($response, true);
 	}
 
-	function curl2($url, $data = null, $headers = null) {
+	function curl2($url, $data = null, $headers = null, $proxy = null) {
 		$cUrl = curl_init( $url );
 		curl_setopt($cUrl, CURLOPT_URL, $url);
 		curl_setopt($cUrl,CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($cUrl,CURLOPT_TIMEOUT, 2);
 		curl_setopt($cUrl,CURLOPT_FOLLOWLOCATION, true);
+		if ($proxy) { /* тут можно задать прокси, тип */
 #		curl_setopt($cUrl,CURLOPT_PROXY, "тут_прокси_и_:порт"); 
 #		curl_setopt($cUrl,CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5); 
+		}
 		curl_setopt($cUrl,CURLOPT_FAILONERROR, true); 
 		curl_setopt($cUrl,CURLOPT_SSL_VERIFYPEER, 0);
 		curl_setopt($cUrl,CURLOPT_SSL_VERIFYHOST, 0);
