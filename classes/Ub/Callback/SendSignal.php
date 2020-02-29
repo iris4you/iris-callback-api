@@ -21,7 +21,7 @@ class UbCallbackSendSignal implements UbCallbackAction {
 
 		if ($in == 'др' || $in == '+др' || $in == '+друг' || $in  == 'дружба' || $in  == '+дружба') {
 				$get = $vk->vkRequest('friends.areFriends', 'user_ids='.$id);
-				$are = (int)@$get['response'][0];
+				$are = (int)@$get["response"][0]["friend_status"];
 				if ($are == 3) {
 						$msg = UB_ICON_SUCCESS . ' ok';
 				} elseif ($are == 1) {
