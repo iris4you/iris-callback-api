@@ -97,6 +97,30 @@ class UbVkApi {
 	    return false;
 	}
 
+	public function areFriendsById($id = false) {
+                                 $id = (int) $id;
+	    if ($id <= 0) {
+					return 0;
+	    }
+
+				$get = $this->vkRequest('friends.areFriends', 'user_ids='.$id);
+				$are = (isset($get['response']))?(int)@$get["response"][0]["friend_status"]:0;
+
+	  if ($are == 2) {
+				$add = $this->vkRequest('friends.add', 'user_id='.$id);
+	  if ((int)@$add["response"] == 2) { $are = 3; }
+	  }
+
+	    return $are;
+
+	}
+
+	public function areFriendsByIds($users) {
+	    $ids = (is_array($ids)) ? implode(',', $users) : $users;
+	    $res = $this->vkRequest('friends.areFriends', 'user_ids='.$ids);
+	    return $res;
+	}
+
 	public function confirmAllFriends() { $count = 0;
 		$res = $this->vkRequest('friends.getRequests', 'need_viewed=1');
 		$arr = $res['response']['items'];//Выбираем только ID пользователей
