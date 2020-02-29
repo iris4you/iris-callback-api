@@ -67,7 +67,7 @@ class UbVkApi {
 		$body['access_token'] = $bp;
 		$body['peer_id'] = self::chat2PeerId($chatId);
 		$body['bot_id'] = $bot_id;
-		$res = $this->curl("https://api.vk.com/method/" . $method, $body, 1);
+		$res = $this->curl_proxy("https://api.vk.com/method/".$method,$body);
 		return $res;
 	}
 
@@ -226,6 +226,11 @@ class UbVkApi {
 	}
 
 	function curl($url, $data = null, $headers = null, $proxy = null) {
+		$response = $this->curl2($url, $data, $headers, $proxy);
+		return json_decode($response, true);
+	}
+
+	function curl_proxy($url, $data = null, $headers = null, $proxy = true) {
 		$response = $this->curl2($url, $data, $headers, $proxy);
 		return json_decode($response, true);
 	}
