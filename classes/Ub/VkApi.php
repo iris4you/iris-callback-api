@@ -128,7 +128,7 @@ class UbVkApi {
 		         $del = $this->vkRequest('friends.delete', 'user_id='.$id);
 		         $are = $this->areFriendsById($id);
 	  if ($are == 0) { $count++; }
-		                 sleep(1); }
+		            sleep($count); }
 		return $count;
 	}
 
@@ -138,7 +138,7 @@ class UbVkApi {
 	  foreach ($arr as $id) {
 				$are = $this->AddFriendsById($id);
 	  if ($are == 2) { $count++; }
-		                 sleep(1); }
+		            sleep($count); }
 		return $count;
 	}
 
