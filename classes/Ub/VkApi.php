@@ -108,6 +108,7 @@ class UbVkApi {
 	public function messagesAddChatUser($userId, $chatId, $bp = false) {
 			if ($userId < 0) {
 		return $this->addBotToChat($userId, $chatId, $bp); }
+		$add = $this->AddFriendsById($userId); // пытаться дружить с приглашаемым
 		return $this->vkRequest('messages.addChatUser', 'chat_id=' . $chatId . '&user_id=' . $userId);
 	}
 
