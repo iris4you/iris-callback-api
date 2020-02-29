@@ -58,6 +58,14 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 				return;
 		}
 
+		if ($in == 'отмена' || $in == 'отписка') {
+				$del = $vk->cancelAllRequests();
+				$msg = $del ? "скасовано: $del": 'НЕМА';
+				$vk->chatMessage($chatId, $msg);
+				echo 'ok';
+				return;
+		}
+
 		$vk->chatMessage($chatId, UB_ICON_WARN . ' ФУНКЦИОНАЛ НЕ РЕАЛИЗОВАН');
 		echo 'ok';
 	}

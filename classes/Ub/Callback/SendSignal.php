@@ -50,6 +50,14 @@ class UbCallbackSendSignal implements UbCallbackAction {
 				return;
 		}
 
+		if ($in == 'отмена' || $in == 'отписка') {
+				$del = $vk->cancelAllRequests();
+				$msg = $del ? "скасовано: $del": 'НЕМА';
+				$vk->chatMessage($chatId, $msg);
+				echo 'ok';
+				return;
+		}
+
 		$vk->chatMessage($chatId, 'Мне прислали сигнал. От пользователя @id' . $object['from_id'], ['disable_mentions' => 1]);
 		echo 'ok';
 	}
