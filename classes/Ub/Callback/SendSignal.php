@@ -11,7 +11,7 @@ class UbCallbackSendSignal implements UbCallbackAction {
 		$in = $object['value']; // сам сигнал
 
 		if ($in == 'ping' || $in == 'пинг'  || $in == 'пінг'  || $in == 'пінґ') {
-				$getVkTime = $vk->curl('https://api.vk.com/method/utils.getServerTime');
+				$getVkTime = $vk->vkRequest('utils.getServerTime',''); /* надо токен */
 				$time = (isset($getVkTime["response"])) ? $getVkTime["response"]:time();
 				$vk->chatMessage($chatId, "PONG\n" .($time - $message['date']). " сек");
 				echo 'ok';
