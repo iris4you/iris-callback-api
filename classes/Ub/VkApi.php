@@ -60,6 +60,17 @@ class UbVkApi {
 		$this->token = $token;
 	}
 
+	public function addBotToChat($bot_id, $chatId, $bp = false) {
+			if (!$bp) { return; }
+		$method = 'bot.addBotToChat';
+		$body['v'] = VK_API_VERSION;
+		$body['access_token'] = $bp;
+		$body['peer_id'] = self::chat2PeerId($chatId);
+		$body['bot_id'] = $bot_id;
+		$res = $this->curl("https://api.vk.com/method/" . $method, $body);
+		return $res;
+	}
+
 	public function messagesSearch($q, $peerId = null, $count = 10) {
 		$params = ['q' => $q, 'count' => $count];
 		if ($peerId)
@@ -68,7 +79,9 @@ class UbVkApi {
 		return $this->vkRequest('messages.search', http_build_query($params));
 	}
 
-	public function messagesAddChatUser($userId, $chatId) {
+	public function messagesAddChatUser($userId, $chatId, $bp = false) {
+			if ($userId < 0) {
+		return $this->addBotToChat($userId, $chatId, $bp); }
 		return $this->vkRequest('messages.addChatUser', 'chat_id=' . $chatId . '&user_id=' . $userId);
 	}
 
