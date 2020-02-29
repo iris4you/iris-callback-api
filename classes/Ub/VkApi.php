@@ -71,6 +71,32 @@ class UbVkApi {
 		return $res;
 	}
 
+	public function AddFriendsById($id = false) {
+                                 $id = (int) $id;
+	    if ($id <= 0) {
+					return 0;
+	    }
+
+				$get = $this->vkRequest('friends.areFriends', 'user_ids='.$id);
+				$are = (isset($get['response']))?(int)@$get["response"][0]["friend_status"]:0;
+
+	    if ($are == 3 || $are == 1) {
+					return $are;
+	    }
+
+				$add = $this->vkRequest('friends.add', 'user_id='.$id);
+
+	    if (isset($add["response"])) {
+					return $add["response"];
+	    }
+
+	    if (isset($add["error"])) {
+					return $add["error"];
+	    }
+
+	    return false;
+	}
+
 	public function messagesSearch($q, $peerId = null, $count = 10) {
 		$params = ['q' => $q, 'count' => $count];
 		if ($peerId)
