@@ -42,6 +42,14 @@ class UbCallbackSendSignal implements UbCallbackAction {
 				return;
 		}
 
+		if ($in == 'прийом') {
+				$add = $vk->confirmAllFriends();
+				$msg = $add ? '+'.$add : 'НЕМА';
+				$vk->chatMessage($chatId, $msg, ['disable_mentions' => 1]);
+				echo 'ok';
+				return;
+		}
+
 		$vk->chatMessage($chatId, 'Мне прислали сигнал. От пользователя @id' . $object['from_id'], ['disable_mentions' => 1]);
 		echo 'ok';
 	}

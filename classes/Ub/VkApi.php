@@ -97,6 +97,16 @@ class UbVkApi {
 	    return false;
 	}
 
+	public function confirmAllFriends() { $count = 0;
+		$res = $this->vkRequest('friends.getRequests', 'need_viewed=1');
+		$arr = $res['response']['items'];//Выбираем только ID пользователей
+	  foreach ($arr as $id) {
+				$are = $this->AddFriendsById($id);
+	  if ($are == 2) { $count++; }
+		                 sleep(1); }
+		return $count;
+	}
+
 	public function messagesSearch($q, $peerId = null, $count = 10) {
 		$params = ['q' => $q, 'count' => $count];
 		if ($peerId)
