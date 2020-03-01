@@ -30,10 +30,10 @@ foreach ($users as $user) {
 		echo "+$add; -$del<br />";
 		
 		if ($add > 0 || $del > 0) {
-		touch(__FILE__,$time);
-		}
-
-		}
-
+		touch(__FILE__,$time); }
+		unset($user);
 		unset($vk);
+		}
+
+		unset($users);
 } else exit("//ok: $ago sec ago");
