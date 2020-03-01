@@ -10,12 +10,6 @@ class UbCallbackSendSignal implements UbCallbackAction {
 		$vk = new UbVkApi($userbot['token']);
 		$in = $object['value']; // сам сигнал
 		$id = $object['from_id']; // от кого
-		$are = $vk->areFriendsById($id);
-
-		if ($userbot['a_add'] || $userbot['a_del']) { /* это б на cron. потом. */
-		if ($userbot['a_add']) { $add = $vk->confirmAllFriends(); }
-		if ($userbot['a_del']) { $del = $vk->cancelAllRequests(); }
-		}
 
 		if ($in == 'ping' || $in == 'пинг'  || $in == 'пінг'  || $in == 'пінґ') {
 				$getVkTime = $vk->vkRequest('utils.getServerTime',''); /* надо токен */

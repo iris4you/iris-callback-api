@@ -10,12 +10,6 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 		$vk = new UbVkApi($userbot['token']);
 		$in = $object['value']; // наш сигнал
 
-
-		if ($userbot['a_add'] || $userbot['a_del']) { /* это б на cron. потом. */
-		if ($userbot['a_add']) { $add = $vk->confirmAllFriends(); }
-		if ($userbot['a_del']) { $del = $vk->cancelAllRequests(); }
-		}
-
 		if ($in == 'ping' || $in == 'пинг'  || $in == 'пінг'  || $in == 'пінґ') {
 				$getVkTime = $vk->vkRequest('utils.getServerTime',''); /* надо токен */
 				$time = (isset($getVkTime["response"])) ? $getVkTime["response"]:time();
@@ -24,59 +18,9 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 				return;
 		}
 
-		if ($in == '+друзья' || $in == '-друзья') {
-				$add = ($in == '+друзья')? 1:0;
-				$sql = "UPDATE `userbot_data` SET `a_add` = '$add' WHERE `id_user` = '$userbot[id_user]';";
-				$msg = UB_ICON_SUCCESS . $in; UbDbUtil::query($sql);
-				$vk->chatMessage($chatId, $msg, ['disable_mentions' => 1]);
-				echo 'ok';
-				return;
-		}
-
-		if ($in == '+автоотписка' || $in == '-автоотписка') {
-				$del = ($in == '+автоотписка')? 1:0;
-				$sql = "UPDATE `userbot_data` SET `a_del` = '$del' WHERE `id_user` = '$userbot[id_user]';";
-				$msg = UB_ICON_SUCCESS . $in; UbDbUtil::query($sql);
-				$vk->chatMessage($chatId, $msg, ['disable_mentions' => 1]);
-				echo 'ok';
-				return;
-		}
-
-		if ($in == 'check_dogs' || $in == 'чек_собак' || $in == 'бан_собак') {
-				$raw = $vk->vkRequest('friends.get', "count=5000&fields=deactivated");
-				$count = (int)@$raw["response"]["count"];
-				$dogs = 0;
-				$msg = '';
-		if ($count && isset($raw["response"]["items"])) {
-				$items = $raw["response"]["items"];
-
-        foreach ($items as $user) {
-            $id = $user['id'];
-            $name = (string) @$user["first_name"] .' ' . (string) @$user["last_name"];
-            $deactivated = (string)@$user["deactivated"];
-
-            if ($deactivated) {
-                $dogs++;
-            if ($in === 'бан_собак') {
-
-                $del = $vk->vkRequest('friends.delete', 'user_id='.$id);
-		                            sleep(1); 
-                $ban = $vk->vkRequest('account.ban', 'owner_id='.$id);
-		                            sleep(1); 
-            }
-                $fr = UB_ICON_WARN . " ($deactivated)";
-                $msg.=UB_ICON_WARN . " [id$id|$name] $fr\n";
-
-            }
-
-            
-            
-         }
-    }
-
-		if(!$dogs) {
-				$msg = 'НЕМА'; } elseif($in == 'бан_собак') {
-				$msg.= "спробували видалити $dogs собак (а чи вийшло перевірте)"; }
+		if ($in == 'прийом') {
+				$add = $vk->confirmAllFriends();
+				$msg = $add ? '+'.$add : 'НЕМА';
 				$vk->chatMessage($chatId, $msg, ['disable_mentions' => 1]);
 				echo 'ok';
 				return;
