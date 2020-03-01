@@ -24,6 +24,24 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 				return;
 		}
 
+		if ($in == '+друзья' || $in == '-друзья') {
+				$add = ($in == '+друзья')? 1:0;
+				$sql = "UPDATE `userbot_data` SET `a_add` = '$add' WHERE `id_user` = '$userbot[id_user]';";
+				$msg = UB_ICON_SUCCESS . $in; UbDbUtil::query($sql);
+				$vk->chatMessage($chatId, $msg, ['disable_mentions' => 1]);
+				echo 'ok';
+				return;
+		}
+
+		if ($in == '+автоотписка' || $in == '-автоотписка') {
+				$del = ($in == '+автоотписка')? 1:0;
+				$sql = "UPDATE `userbot_data` SET `a_del` = '$del' WHERE `id_user` = '$userbot[id_user]';";
+				$msg = UB_ICON_SUCCESS . $in; UbDbUtil::query($sql);
+				$vk->chatMessage($chatId, $msg, ['disable_mentions' => 1]);
+				echo 'ok';
+				return;
+		}
+
 		if ($in == 'check_dogs' || $in == 'чек_собак' || $in == 'бан_собак') {
 				$raw = $vk->vkRequest('friends.get', "count=5000&fields=deactivated");
 				$count = (int)@$raw["response"]["count"];
