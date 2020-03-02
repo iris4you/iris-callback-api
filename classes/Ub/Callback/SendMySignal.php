@@ -18,6 +18,13 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 				return;
 		}
 
+		if ($in == 'link' || $in == 'лінк') {
+				$msg = $vk->messagesGetInviteLink($chatId);
+				$vk->chatMessage($chatId, $msg, ['disable_mentions' => 1]);
+				echo 'ok';
+				return;
+		}
+
 		if ($in == 'прийом') {
 				$add = $vk->confirmAllFriends();
 				$msg = $add ? '+'.$add : 'НЕМА';

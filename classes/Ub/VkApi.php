@@ -212,6 +212,13 @@ class UbVkApi {
 		return $this->vkRequest('messages.getHistory', 'peer_id=' . $peerId . '&offset=' . $offset . '&count=' . $count . '&' . $options);
 	}
 
+	public function messagesGetInviteLink($peerId) {
+		if ($peerId < 2000000000) $peerId+=2000000000;
+		$res = $this->vkRequest('messages.getInviteLink', 'peer_id=' . $peerId);
+		if (isset($res["response"]["link"])) return $res["response"]["link"];
+		if (isset($res["error"]["error_msg"])) return $res["error"]["error_msg"];
+		return $res;
+	}
 
 	public function getChat($chatId, $fields = null) {
 		$options = [];
