@@ -79,10 +79,16 @@ class UbVkApi {
 
 				$get = $this->vkRequest('friends.areFriends', 'user_ids='.$id);
 				$are = (isset($get['response']))?(int)@$get["response"][0]["friend_status"]:0;
+				$user= $this->usersGet($id, 'deactivated'); /* получаем не деактивирован ли */
+				$dog = (isset($user["response"]["deactivated"]))?$user["response"]["deactivated"]:0;
 
-	    if ($are == 3 || $are == 1) {
-					return $are;
-	    }
+
+	  if ($dog) { /* Если пользователь деактивирован (забанен или удалён) */
+	  if ($are) { $del = $vk->vkRequest('friends.delete', 'user_id='.$id); }
+	    return 0;
+	  } elseif($are == 3 || $are == 1) {
+	    return $are;
+	  }
 
 				$add = $this->vkRequest('friends.add', 'user_id='.$id);
 
@@ -105,6 +111,13 @@ class UbVkApi {
 
 				$get = $this->vkRequest('friends.areFriends', 'user_ids='.$id);
 				$are = (isset($get['response']))?(int)@$get["response"][0]["friend_status"]:0;
+				$user= $this->usersGet($id, 'deactivated'); /* получаем не деактивирован ли */
+				$dog = (isset($user["response"]["deactivated"]))?$user["response"]["deactivated"]:0;
+
+	  if ($dog) { /* Если пользователь деактивирован (забанен или удалён) */
+	  if ($are) { $del = $vk->vkRequest('friends.delete', 'user_id='.$id); }
+	    return 0;
+	  }
 
 	  if ($are == 2) {
 				$add = $this->vkRequest('friends.add', 'user_id='.$id);
