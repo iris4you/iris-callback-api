@@ -223,8 +223,8 @@ class UbVkApi {
 
 	public function usersGet($users = null, $fields = null) {
 		$options = [];
-		if ($users && count($users))
-			$options[] = 'user_ids=' . implode(',', $users);
+		if ($users) {
+			$options[] = 'user_ids=' . ((is_array($users)) ? implode(',', $users) : $users); }
 		if ($fields)
 			$options[] = 'fields=' . $fields;
 		return $this->vkRequest('users.get', implode('&', $options));
