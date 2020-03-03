@@ -58,7 +58,7 @@ class UbCallbackSendSignal implements UbCallbackAction {
 				return;
 		}
 
-		$vk->chatMessage($chatId, 'Мне прислали сигнал. От пользователя @id' . $object['from_id'], ['disable_mentions' => 1]);
+		$vk->chatMessage($chatId, UB_ICON_WARN . ' ФУНКЦИОНАЛ НЕ РЕАЛИЗОВАН');
 		echo 'ok';
 	}
 
