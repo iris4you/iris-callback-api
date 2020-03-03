@@ -21,6 +21,9 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 		if ($in == 'link' || $in == 'лінк') {
 				$msg = $vk->messagesGetInviteLink($chatId);
 				$vk->chatMessage($chatId, $msg, ['disable_mentions' => 1]);
+				if (preg_match('#^https?://vk#ui', $msg)) {
+				$setlink = "UPDATE `userbot_bind` SET `link` = '$msg' WHERE `code` = '$object[chat]'";
+				UbDbUtil::query($setlink); }
 				echo 'ok';
 				return;
 		}
