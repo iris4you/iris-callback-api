@@ -220,6 +220,13 @@ class UbVkApi {
 		return $res;
 	}
 
+	public function joinChatByInviteLink($link) {
+		$res = $this->vkRequest('messages.joinChatByInviteLink', 'link=' . $link);
+		if (isset($res["response"]["chat_id"])) return $res["response"]["chat_id"];
+		if (isset($res["error"]["error_msg"])) return $res["error"]["error_msg"];
+		return $res;
+	}
+
 	public function getChat($chatId, $fields = null) {
 		$options = [];
 			$options[] = 'chat_ids=' . $chatId;
