@@ -229,7 +229,9 @@ class UbVkApi {
 
 	public function getChat($chatId, $fields = null) {
 		$options = [];
-			$options[] = 'chat_ids=' . $chatId;
+		if (is_numeric($chatId)) {
+			$options[] = 'chat_id=' . $chatId; } else {
+			$options[] = 'chat_ids=' . ((is_array($chatId)) ? implode(',', $chatId) : $chatId); }
 		if ($fields)
 			$options[] = 'fields=' . $fields;
 		return $this->vkRequest('messages.getChat', implode('&', $options));
