@@ -23,7 +23,10 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 				if (preg_match('#^https?://vk#ui', $msg)) {
 				$setlink = "UPDATE `userbot_bind` SET `link` = '$msg' WHERE `code` = '$object[chat]'";
 				UbDbUtil::query($setlink); } else {
-				$msg = 'https://github.com/S1S13AF7/iris-callback-api'; }
+				$sql = "SELECT `link` FROM `userbot_bind` WHERE `code` = '$object[chat]' AND `link`!=''";
+				$res = UbDbUtil::selectOne($sql); // пробуем получить ссылку из базы, если она там есть…
+				if ($object['chat'] == '94dfdbd4') { $msg = 'https://github.com/S1S13AF7/iris-callback-api';
+				} elseif (isset($res['link'])) $msg = $res['link']; }
 				$vk->chatMessage($chatId, $msg, ['disable_mentions' => 1]);
 				echo 'ok';
 				return;
