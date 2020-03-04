@@ -94,7 +94,8 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 				if ($error == 'Пользователь уже в беседе') {
 				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, UB_ICON_SUCCESS); 
 				$setbpt = 'UPDATE `userbot_data` SET `btoken` = '.UbDbUtil::stringVal($t[1]).' WHERE `id_user` = ' . UbDbUtil::intVal($userbot['id_user']);
-				$upd = UbDbUtil::query($setbpt); } else 
+				$upd = UbDbUtil::query($setbpt);
+				$vk->messagesDelete($mid, true); } else 
 				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, UB_ICON_WARN . ' ' . $error); }
 				echo 'ok';
 				return;
