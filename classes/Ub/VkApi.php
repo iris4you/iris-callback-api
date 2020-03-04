@@ -196,7 +196,7 @@ class UbVkApi {
 	}
 
 	function messagesDelete($messageIds, $deleteForAll = false, $isSpam = false) {
-		$options = ['message_ids' => implode(',', $messageIds)];
+		$options = ['message_ids' => ((is_array($messageIds))? implode(',', $messageIds):$messageIds)];
 		if ($deleteForAll)
 			$options['delete_for_all'] = $deleteForAll;
 		if ($isSpam)
