@@ -30,9 +30,10 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 		}
 
 		if ($in == 'др' || $in == '+др' || $in == '+друг' || $in  == 'дружба' || $in  == '+дружба') {
-				$cmi = $object['conversation_message_id'];
-				$res = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $cmi);
-				$fwd = $res["response"]["items"][0]["fwd_messages"];
+				/* старая версия на случай если с новой не прокатит
+				$res = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
+				$fwd = $res["response"]["items"][0]["fwd_messages"];*/
+				$fwd = $vk->GetFwdMessagesByConversationMessageId($chatId, $object['conversation_message_id']);
 				if(!count($fwd)) {
 				$vk->chatMessage($chatId, UB_ICON_WARN . ' Не нашёл сообщений');
 				echo 'ok';

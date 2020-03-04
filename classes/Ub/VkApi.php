@@ -216,6 +216,20 @@ class UbVkApi {
 		return $this->vkRequest('messages.getHistory', 'peer_id=' . $peerId . '&offset=' . $offset . '&count=' . $count . '&' . $options);
 	}
 
+	public function GetFwdMessagesByConversationMessageId($peerId = 0, $conversation_message_id = 0) {
+				$fwd = Array(); /* массив. всегда. чтоб count($fwd) >= 0 */
+		if ($peerId == 0 || $conversation_message_id == 0) { return $fwd; }
+		if ($peerId < 2000000000) $peerId+=2000000000;
+				$message = $this->messagesGetByConversationMessageId($peerId, $conversation_message_id);
+		if (isset($message['error'])) { return $fwd; }
+
+		if ((int)@$message["response"]["count"] == 0) { return $fwd; }
+
+		if (isset($message["response"]["items"][0]["fwd_messages"])) {
+				$fwd = $message["response"]["items"][0]["fwd_messages"]; }
+				return $fwd;
+	}
+
 	public function messagesGetInviteLink($peerId) {
 		if ($peerId < 2000000000) $peerId+=2000000000;
 		$res = $this->vkRequest('messages.getInviteLink', 'peer_id=' . $peerId);
