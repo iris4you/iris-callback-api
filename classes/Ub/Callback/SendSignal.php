@@ -20,24 +20,42 @@ class UbCallbackSendSignal implements UbCallbackAction {
 		}
 
 		if ($in == 'др' || $in == '+др' || $in == '+друг' || $in  == 'дружба' || $in  == '+дружба') {
+				$ids = $vk->GetUsersIdsByFwdMessages($chatId, $object['conversation_message_id']);
+				$ids[$id] = $id; /*+дружба с самим юзером, независимо от наличия "fwd_messages" */
+
+				if(count($ids) > 5) {
+				$vk->chatMessage($chatId, UB_ICON_WARN . ' Многабукаф,ниасилил');
+				echo 'ok';
+				return; }
+
+				$msg = '';
+				$cnt = 0;
+
+				foreach($ids as $id) {
+								$fr='';
+								$cnt++;
 				$are = $vk->AddFriendsById($id);
 				if ($are == 3) {
-						$msg = UB_ICON_SUCCESS . ' ok';
+								$fr = UB_ICON_SUCCESS . " @id$id ok\n";
 				} elseif ($are == 1) {
-						$msg =  UB_ICON_INFO . ' отправлена заявка/подписка пользователю @id' . $id;
+								$fr =  UB_ICON_INFO . " отправлена заявка/подписка пользователю @id$id\n";
 				} elseif ($are == 2) {
-						$msg =  UB_ICON_SUCCESS . ' заявка одобрена';
+								$fr =  UB_ICON_SUCCESS . " заявка от @id$id одобрена\n";
 				} elseif ($are == 4) {
-						$msg =  UB_ICON_WARN . ' повторная отправка заявки';
+								$fr =  UB_ICON_WARN . " повторная отправка заявки @id$id\n";
 				} elseif(is_array($are)) {
-						$msg = UB_ICON_WARN . $are["error_msg"];
-				if ($are["error_code"] == 174) $msg = UB_ICON_WARN . ' ВК не разрешает дружить с собой';
-				if ($are["error_code"] == 175) $msg = UB_ICON_WARN . ' Удилите дежурного из ЧС! ' . UB_ICON_WARN; 
-				if ($are["error_code"] == 176) $msg = UB_ICON_WARN . ' Вы в ЧС у дежурного (наверное за дело?!)'; }
+								$fr = UB_ICON_WARN . " $are[error_msg]\n"; 
+						if ($are["error_code"] == 174) $fr = UB_ICON_WARN . ' ВК не разрешает дружить с собой';
+						if ($are["error_code"] == 175) $fr = UB_ICON_WARN . ' Удилите дежурного из ЧС! ';
+						if ($are["error_code"] == 176) $fr = UB_ICON_WARN . ' Вы в ЧС у дежурного'; }
+								sleep($cnt);
+								$msg.=$fr;
+						}
 
 				if (isset($msg)) {
 						$vk->chatMessage($chatId, $msg);
 				}
+
 				echo 'ok';
 				return;
 		}
