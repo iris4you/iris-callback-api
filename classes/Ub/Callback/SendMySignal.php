@@ -31,21 +31,16 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 
 		if ($in == 'др' || $in == '+др' || $in == '+друг' || $in  == 'дружба' || $in  == '+дружба') {
 				/* старая версия на случай если с новой не прокатит
-				$res = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
-				$fwd = $res["response"]["items"][0]["fwd_messages"];*/
-				$fwd = $vk->GetFwdMessagesByConversationMessageId($chatId, $object['conversation_message_id']);
-				if(!count($fwd)) {
-				$vk->chatMessage($chatId, UB_ICON_WARN . ' Не нашёл сообщений');
+				$fwd = $vk->GetFwdMessagesByConversationMessageId($chatId, $object['conversation_message_id']);*/
+				$ids = $vk->GetUsersIdsByFwdMessages($chatId, $object['conversation_message_id']);
+				if(!count($ids)) {
+				$vk->chatMessage($chatId, UB_ICON_WARN . ' Не нашёл пользователей');
 				echo 'ok';
-				return; } elseif(count($fwd) > 7) {
+				return; } elseif(count($ids) > 5) {
 				$vk->chatMessage($chatId, UB_ICON_WARN . ' Многабукаф,ниасилил');
 				echo 'ok';
 				return; }
 				$msg = '';
-				foreach($fwd as $m) {
-				$ids[$m["from_id"]]=$m["from_id"]; /* исключаем случаи, когда несколько пересланных от одного id */
-				}
-
 				$cnt = 0;
 
 				foreach($ids as $id) {

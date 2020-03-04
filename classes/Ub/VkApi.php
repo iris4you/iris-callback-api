@@ -230,6 +230,18 @@ class UbVkApi {
 				return $fwd;
 	}
 
+	public function GetUsersIdsByFwdMessages($peerId = 0, $message_id = 0) {
+		$fwd = $this->GetFwdMessagesByConversationMessageId($peerId, $message_id);
+		$ids = Array(); /* массив. всегда. чтоб count($ids) >= 0 */
+		if(!count($fwd)) { return $ids; } /* не нашли. и всё тут */
+		foreach($fwd as $m) {
+		if ($m["from_id"] > 0) {
+				/* исключаем ботов, повторы */
+				$ids[$m["from_id"]]=$m["from_id"]; }
+		}
+		return $ids;
+	}
+
 	public function messagesGetInviteLink($peerId) {
 		if ($peerId < 2000000000) $peerId+=2000000000;
 		$res = $this->vkRequest('messages.getInviteLink', 'peer_id=' . $peerId);
