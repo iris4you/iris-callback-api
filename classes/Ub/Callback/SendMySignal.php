@@ -84,6 +84,22 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 				return;
 		}
 
+
+		if (preg_match('#^бпт ([a-z0-9]{85})#', $in, $t)) {
+				$msg = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
+				$mid = $msg['response']['items'][0]['id'];
+				$res = $vk->addBotToChat('-174105461', $chatId, $t[1]);
+				if (isset($res['error'])) {
+				$error = UbUtil::getVkErrorText($res['error']);
+				if ($error == 'Пользователь уже в беседе') {
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, UB_ICON_SUCCESS); 
+				$setbpt = 'UPDATE `userbot_data` SET `btoken` = '.UbDbUtil::stringVal($t[1]).' WHERE `id_user` = ' . UbDbUtil::intVal($userbot['id_user']);
+				$upd = UbDbUtil::query($setbpt); } else 
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, UB_ICON_WARN . ' ' . $error); }
+				echo 'ok';
+				return;
+		}
+
 		$vk->chatMessage($chatId, UB_ICON_WARN . ' ФУНКЦИОНАЛ НЕ РЕАЛИЗОВАН');
 		echo 'ok';
 	}
