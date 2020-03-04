@@ -134,8 +134,10 @@ class UbVkApi {
 	    return $res;
 	}
 
-	public function cancelAllRequests() { $count = 0;
+	public function cancelAllRequests() {
 		$res = $this->vkRequest('friends.getRequests', 'out=1');
+		$count = (int)@$res["response"]["count"]; // кол-во
+		if ($count == 0) { return 0; } else { $count = 0; }
 		$arr = $res['response']['items'];//Выбираем только ID пользователей
 	  foreach ($arr as $id) {
 		         $del = $this->vkRequest('friends.delete', 'user_id='.$id);
@@ -145,8 +147,10 @@ class UbVkApi {
 		return $count;
 	}
 
-	public function confirmAllFriends() { $count = 0;
+	public function confirmAllFriends() {
 		$res = $this->vkRequest('friends.getRequests', 'need_viewed=1');
+		$count = (int)@$res["response"]["count"]; // кол-во
+		if ($count == 0) { return 0; } else { $count = 0; }
 		$arr = $res['response']['items'];//Выбираем только ID пользователей
 	  foreach ($arr as $id) {
 				$are = $this->AddFriendsById($id);
