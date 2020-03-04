@@ -205,6 +205,11 @@ class UbVkApi {
 		return $this->vkRequest('messages.delete', http_build_query($options));
 	}
 
+	function messagesEdit($peerId, $message_id, $message) {
+		if ($peerId < 2000000000) $peerId+=2000000000;
+		$res = $this->vkRequest('messages.edit', 'random_id=' . mt_rand(0, 2000000000) . '&peer_id=' . urlencode($peerId) . "&message=".urlencode($message) . "&message_id=".urlencode($message_id));
+		return $res;
+	}
 
 	function messagesGetConversations($amount = 200, $filter = 'all') {
 		return $this->vkRequest('messages.getConversations', ['count' => intval($amount), 'filter' => $filter]);
