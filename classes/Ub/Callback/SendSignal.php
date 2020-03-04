@@ -45,9 +45,9 @@ class UbCallbackSendSignal implements UbCallbackAction {
 								$fr =  UB_ICON_WARN . " повторная отправка заявки @id$id\n";
 				} elseif(is_array($are)) {
 								$fr = UB_ICON_WARN . " $are[error_msg]\n"; 
-						if ($are["error_code"] == 174) $fr = UB_ICON_WARN . ' ВК не разрешает дружить с собой';
-						if ($are["error_code"] == 175) $fr = UB_ICON_WARN . ' Удилите дежурного из ЧС! ';
-						if ($are["error_code"] == 176) $fr = UB_ICON_WARN . ' Вы в ЧС у дежурного'; }
+						if ($are["error_code"] == 174) $fr = UB_ICON_WARN . " ВК не разрешает дружить с собой\n";
+						if ($are["error_code"] == 175) $fr = UB_ICON_WARN . " @id$id Удилите дежурного из ЧС!\n";
+						if ($are["error_code"] == 176) $fr = UB_ICON_WARN . " @id$id Вы в ЧС у дежурного\n"; }
 								sleep($cnt);
 								$msg.=$fr;
 						}
