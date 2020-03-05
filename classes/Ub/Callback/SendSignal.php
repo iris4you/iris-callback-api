@@ -23,7 +23,7 @@ class UbCallbackSendSignal implements UbCallbackAction {
 				$ids = $vk->GetUsersIdsByFwdMessages($chatId, $object['conversation_message_id']);
 				$ids[$id] = $id; /*+дружба с самим юзером, независимо от наличия "fwd_messages" */
 
-				if(count($ids) > 5) {
+				if(count($ids) > 6) {
 				$vk->chatMessage($chatId, UB_ICON_WARN . ' Многабукаф,ниасилил');
 				echo 'ok';
 				return; }
