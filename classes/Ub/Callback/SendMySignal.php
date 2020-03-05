@@ -115,6 +115,30 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 				return;
 		}
 
+		if ($in == 'бпт' || $in == 'бптайм'  || $in == 'bptime') {
+				$ago = time() - (int)@$userbot['bptime'];
+				$msg = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
+				$mid = $msg['response']['items'][0]['id'];
+				if(!$userbot['bptime']) { 
+				$msg = UB_ICON_WARN . ' не задан';
+				} elseif($ago < 59) {
+				$msg = "$ago сек. назад";
+				} elseif($ago / 60 > 1 and $ago / 60 < 59) {
+				$min = floor($ago / 60 % 60);
+				$msg = $min . ' минут' . self::number($min, 'а', 'ы', '') . ' назад';
+				} elseif($ago / 3600 > 1 and $ago / 3600 < 23) {
+				$min = floor($ago / 60 % 60);
+				$hour = floor($ago / 3600 % 24);
+				$msg = $hour . ' час' . self::number($hour, '', 'а', 'ов') . ' и ' .
+				$min . ' минут' . self::number($min, 'а', 'ы', '') . ' тому назад';
+				} else {
+				$msg = UB_ICON_WARN . ' более 23 часов назад';
+				}
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, $msg);
+				echo 'ok';
+				return;
+		}
+
 		if (preg_match('#^бпт ([a-z0-9]{85})#', $in, $t)) {
 				$msg = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
 				$mid = $msg['response']['items'][0]['id'];
@@ -134,5 +158,31 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 		$vk->chatMessage($chatId, UB_ICON_WARN . ' ФУНКЦИОНАЛ НЕ РЕАЛИЗОВАН');
 		echo 'ok';
 	}
+
+    static function number($num, $one, $two, $more) {
+        $num = (int)$num;
+        $l2 = substr($num, strlen($num) - 2, 2);
+
+        if ($l2 >= 5 && $l2 <= 20)
+            return $more;
+        $l = substr($num, strlen($num) - 1, 1);
+        switch ($l) {
+            case 1:
+                return $one;
+                break;
+            case 2:
+                return $two;
+                break;
+            case 3:
+                return $two;
+                break;
+            case 4:
+                return $two;
+                break;
+            default:
+                return $more;
+                break;
+        }
+    }
 
 }
