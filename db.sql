@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS `userbot_bind` (
 
 CREATE TABLE IF NOT EXISTS `userbot_data` (
   `id_user` int(11) NOT NULL,
+  `a_add` enum('0','1') NOT NULL DEFAULT '0',
+  `a_del` enum('0','1') NOT NULL DEFAULT '0',
   `token` text NOT NULL,
   `btoken` text NOT NULL,
   `bptime` int(11) NOT NULL,
