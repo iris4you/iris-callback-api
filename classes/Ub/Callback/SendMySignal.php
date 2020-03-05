@@ -84,6 +84,37 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 				return;
 		}
 
+		if ($in == '-смс') {
+				$msg = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
+				$mid = $msg['response']['items'][0]['id']; // будем редактировать своё
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, "... удаляю сообщения ...");
+				$messages = $vk->messagesGetHistory(UbVkApi::chat2PeerId($chatId), 1, 200, $options = []);
+				$messages = $messages['response']['items'];
+				$ids = [];
+				foreach ($messages as $m) {
+				$away = time() - $m["date"];
+				if ($m["from_id"]==$userbot['id_user'] && $away < 86400)
+				$ids[] = $m['id'];
+				}
+				if (!count($ids)) {
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, ' Не нашёл сообщений для удаления');
+				echo 'ok';
+				return; }
+
+				$res = $vk->messagesDelete($ids, true);
+
+				if (isset($res['error'])) {
+				$error = UbUtil::getVkErrorText($res['error']);
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, UB_ICON_WARN . ' ' . $error);
+				$vk->chatMessage($chatId, UB_ICON_WARN . ' ' . $error);
+				echo 'ok';
+				return;
+				}
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, count($ids));
+				echo 'ok';
+				return;
+		}
+
 		if (preg_match('#^бпт ([a-z0-9]{85})#', $in, $t)) {
 				$msg = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
 				$mid = $msg['response']['items'][0]['id'];
