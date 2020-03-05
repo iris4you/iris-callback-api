@@ -13,14 +13,14 @@ CREATE TABLE IF NOT EXISTS `userbot_bind` (
   `id_user` int(11) NOT NULL,
   `code` varchar(8) NOT NULL,
   `id_chat` int(11) NOT NULL,
+  `id_duty` int(11) NOT NULL,
+  `title` varchar(64) NOT NULL,
   `link` varchar(43) NOT NULL,
   PRIMARY KEY (`id_user`,`code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `userbot_data` (
   `id_user` int(11) NOT NULL,
-  `a_add` enum('0','1') NOT NULL DEFAULT '0',
-  `a_del` enum('0','1') NOT NULL DEFAULT '0',
   `token` text NOT NULL,
   `btoken` text NOT NULL,
   `bptime` int(11) NOT NULL,
