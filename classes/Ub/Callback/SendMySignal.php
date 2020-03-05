@@ -95,6 +95,8 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 		}
 
 		if ($in == '-смс') {
+				$getVkTime = $vk->vkRequest('utils.getServerTime',''); /* надо токен */
+				$time = (isset($getVkTime["response"])) ? $getVkTime["response"]:time();
 				$msg = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
 				$mid = $msg['response']['items'][0]['id']; // будем редактировать своё
 				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, "... удаляю сообщения ...");
@@ -102,7 +104,7 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 				$messages = $messages['response']['items'];
 				$ids = [];
 				foreach ($messages as $m) {
-				$away = time() - $m["date"];
+				$away = $time - $m["date"];
 				if ($m["from_id"]==$userbot['id_user'] && $away < 86400)
 				$ids[] = $m['id'];
 				}

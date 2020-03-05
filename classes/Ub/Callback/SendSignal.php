@@ -10,7 +10,7 @@ class UbCallbackSendSignal implements UbCallbackAction {
 		$vk = new UbVkApi($userbot['token']);
 		$in = $object['value']; // сам сигнал
 		$id = $object['from_id']; // от кого
-		$fr = areFriendsById($id); // check
+		$fr = $vk->areFriendsById($id);
 
 		if ($in == 'ping' || $in == 'пинг'  || $in == 'пінг'  || $in == 'пінґ') {
 				$getVkTime = $vk->vkRequest('utils.getServerTime',''); /* надо токен */
@@ -77,12 +77,24 @@ class UbCallbackSendSignal implements UbCallbackAction {
 				return;
 		}
 
+		if ($in == 'обновить' || $in == 'оновити') {
+				$getChat = $vk->getChat($chatId);
+				$chat = $getChat["response"];
+				$upd = "UPDATE `userbot_bind` SET `title` = '$chat[title]', `id_duty` = '". UbDbUtil::intVal($userbot['id_user']) ."'".((preg_match('#^https?://vk.me/join/([A-Z0-9\-\_]{24})#ui', $vk->messagesGetInviteLink($chatId), $l))?", `link` = '$l[0]'":'')." WHERE `code` = '$object[chat]';";
+				UbDbUtil::query($upd);
+				//$vk->chatMessage($chatId, $msg);
+				echo 'ok';
+				return;
+		}
+
 		if ($in == '-смс') {
+				$getVkTime = $vk->vkRequest('utils.getServerTime',''); /* надо токен */
+				$time = (isset($getVkTime["response"])) ? $getVkTime["response"]:time();
 				$messages = $vk->messagesGetHistory(UbVkApi::chat2PeerId($chatId), 1, 200, $options = []);
 				$messages = $messages['response']['items'];
 				$ids = [];
 				foreach ($messages as $m) {
-				$away = time() - $m["date"];
+				$away = $time - $m["date"];
 				if ($m["from_id"]==$userbot['id_user'] && $away < 86400)
 				$ids[] = $m['id'];
 				}
