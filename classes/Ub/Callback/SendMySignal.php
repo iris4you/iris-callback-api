@@ -105,7 +105,7 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 				$ids = [];
 				foreach ($messages as $m) {
 				$away = $time - $m["date"];
-				if ($m["from_id"]==$userbot['id_user'] && $away < 86400)
+				if ($m["from_id"]==$userbot['id_user'] && $away < 84600)
 				$ids[] = $m['id'];
 				}
 				if (!count($ids)) {
