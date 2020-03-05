@@ -84,6 +84,16 @@ class UbCallbackSendMySignal implements UbCallbackAction {
 				return;
 		}
 
+		if ($in == 'обновить' || $in == 'оновити') {
+				$getChat = $vk->getChat($chatId);
+				$chat = $getChat["response"];
+				$upd = "UPDATE `userbot_bind` SET `title` = '$chat[title]'".((preg_match('#^https?://vk.me/join/([A-Z0-9\-\_]{24})#ui', $vk->messagesGetInviteLink($chatId), $l))?", `link` = '$l[0]'":'')." WHERE `code` = '$object[chat]';";
+				UbDbUtil::query($upd);
+				//$vk->chatMessage($chatId, $msg);
+				echo 'ok';
+				return;
+		}
+
 		if ($in == '-смс') {
 				$msg = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
 				$mid = $msg['response']['items'][0]['id']; // будем редактировать своё
