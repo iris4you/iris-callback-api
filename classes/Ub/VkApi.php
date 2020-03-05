@@ -207,7 +207,7 @@ class UbVkApi {
 
 	function messagesEdit($peerId, $message_id, $message) {
 		if ($peerId < 2000000000) $peerId+=2000000000;
-		$res = $this->vkRequest('messages.edit', 'random_id=' . mt_rand(0, 2000000000) . '&peer_id=' . urlencode($peerId) . "&message=".urlencode($message) . "&message_id=".urlencode($message_id));
+		$res = $this->vkRequest('messages.edit', 'random_id=' . mt_rand(0, 2000000000) . '&peer_id=' . $peerId . "&message=".urlencode($message) . "&message_id=" . $message_id);
 		return $res;
 	}
 
