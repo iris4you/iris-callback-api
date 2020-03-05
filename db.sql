@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS `userbot_data` (
   `id_user` int(11) NOT NULL,
   `token` text NOT NULL,
   `btoken` text NOT NULL,
+  `bptime` int(11) NOT NULL,
   `secret` varchar(32) NOT NULL,
   PRIMARY KEY (`id_user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
