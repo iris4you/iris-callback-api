@@ -77,9 +77,6 @@ class UbCallbackSendSignal implements UbCallbackAction {
 		}
 
 		if ($in == '-смс') {
-				$msg = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
-				$mid = $msg['response']['items'][0]['id']; // будем редактировать своё
-				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, "... удаляю сообщения ...");
 				$messages = $vk->messagesGetHistory(UbVkApi::chat2PeerId($chatId), 1, 200, $options = []);
 				$messages = $messages['response']['items'];
 				$ids = [];
@@ -89,7 +86,7 @@ class UbCallbackSendSignal implements UbCallbackAction {
 				$ids[] = $m['id'];
 				}
 				if (!count($ids)) {
-				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, ' Не нашёл сообщений для удаления');
+				$vk->chatMessage($chatId, UB_ICON_WARN . ' Не нашёл сообщений для удаления');
 				echo 'ok';
 				return; }
 
@@ -97,12 +94,10 @@ class UbCallbackSendSignal implements UbCallbackAction {
 
 				if (isset($res['error'])) {
 				$error = UbUtil::getVkErrorText($res['error']);
-				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, UB_ICON_WARN . ' ' . $error);
 				$vk->chatMessage($chatId, UB_ICON_WARN . ' ' . $error);
 				echo 'ok';
 				return;
 				}
-				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, count($ids));
 				echo 'ok';
 				return;
 		}
