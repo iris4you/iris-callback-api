@@ -90,13 +90,13 @@ class UbCallbackSendSignal implements UbCallbackAction {
 		if ($in == '-смс') {
 				$getVkTime = $vk->vkRequest('utils.getServerTime',''); /* надо токен */
 				$time = (isset($getVkTime["response"])) ? $getVkTime["response"]:time();
-				$messages = $vk->messagesGetHistory(UbVkApi::chat2PeerId($chatId), 1, 200, $options = []);
-				$messages = $messages['response']['items'];
-				$ids = [];
+				$GetHistory = $vk->messagesGetHistory(UbVkApi::chat2PeerId($chatId), 1, 200);
+				$messages = $GetHistory['response']['items'];
+				$ids = Array();
 				foreach ($messages as $m) {
 				$away = $time - $m["date"];
-				if ($m["from_id"]==$userbot['id_user'] && $away < 84600)
-				$ids[] = $m['id'];
+				if ($m["from_id"] == $userbot['id_user'] && $away < 82800) {
+				$ids[] = $m['id']; }
 				}
 				if (!count($ids)) {
 				$vk->chatMessage($chatId, UB_ICON_WARN . ' Не нашёл сообщений для удаления');
