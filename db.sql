@@ -13,17 +13,17 @@ CREATE TABLE IF NOT EXISTS `userbot_bind` (
   `id_user` int(11) NOT NULL,
   `code` varchar(8) NOT NULL,
   `id_chat` int(11) NOT NULL,
-  `id_duty` int(11) NOT NULL,
-  `title` varchar(64) NOT NULL,
-  `link` varchar(43) NOT NULL,
+  `id_duty` int(11) NOT NULL DEFAULT '0',
+  `title` varchar(64) NOT NULL DEFAULT '',
+  `link` varchar(43) NOT NULL DEFAULT "You can't see invite link for this chat",
   PRIMARY KEY (`id_user`,`code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `userbot_data` (
   `id_user` int(11) NOT NULL,
   `token` text NOT NULL,
-  `btoken` text NOT NULL,
-  `bptime` int(11) NOT NULL,
+  `btoken` text NOT NULL DEFAULT '',
+  `bptime` int(11) NOT NULL DEFAULT '0',
   `secret` varchar(32) NOT NULL,
   PRIMARY KEY (`id_user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
