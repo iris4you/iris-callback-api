@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `userbot_bind` (
   `id_chat` int(11) NOT NULL,
   `id_duty` int(11) NOT NULL DEFAULT '0',
   `title` varchar(64) NOT NULL DEFAULT '',
-  `link` varchar(43) NOT NULL DEFAULT "You can't see invite link for this chat",
+  `link` varchar(43) NOT NULL DEFAULT 'You can\'t see invite link for this chat',
   PRIMARY KEY (`id_user`,`code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
