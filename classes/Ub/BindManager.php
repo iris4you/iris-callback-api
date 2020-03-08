@@ -16,11 +16,10 @@ class UbBindManager {
 		if ($id_duty && (is_numeric($id_duty)) && (int)$id_duty == (int)@$t['id_user']) {
 		UbDbUtil::query("UPDATE `userbot_bind` SET `id_duty` = '". UbDbUtil::intVal($t['duty'])."' WHERE `code` = '$t[code]';"); } else {
 		$id_duty = (int) self::getDutyIdByUserChat($t['code']); }
-		$link = (preg_match('#^https?://vk.me/join/([A-Z0-9\-\_]{24})#ui', (string)@$t['link'], $l))?$l[0]:'';
 		$sql = 'INSERT INTO userbot_bind SET id_user = ' . UbDbUtil::intVal($t['id_user']) . ', code = ' . UbDbUtil::stringVal($t['code']) . ', id_chat = ' . UbDbUtil::intVal($t['id_chat'])
 				. ', id_duty = ' . UbDbUtil::intVal((int)$id_duty)
 				. ', title = ' . UbDbUtil::stringVal(@$t['title'])
-				. ', link = ' . UbDbUtil::stringVal((string)$link)
+				. ', link = ' . UbDbUtil::stringVal(@$t['link'])
 				. ' ON DUPLICATE KEY UPDATE'
 				. ' id_chat = VALUES(id_chat)'
 				. ', id_duty = VALUES(id_duty)'
