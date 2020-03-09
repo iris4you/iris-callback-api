@@ -1,5 +1,5 @@
 <?php
-class UbCallbackSendSignal implements UbCallbackAction {
+class UbCallbackSendMySignal implements UbCallbackAction {
 	function execute($userId, $object, $userbot, $message) {
 		$chatId = UbUtil::getChatId($userId, $object, $userbot, $message);
 		if (!$chatId) {
@@ -8,9 +8,7 @@ class UbCallbackSendSignal implements UbCallbackAction {
 		}
 
 		$vk = new UbVkApi($userbot['token']);
-		$in = $object['value']; // сам сигнал
-		$id = $object['from_id']; // от кого
-		$fr = $vk->areFriendsById($id);
+		$in = $object['value']; // наш сигнал
 
 		if ($in == 'ping' || $in == 'пинг'  || $in == 'пінг'  || $in == 'пінґ') {
 				$getVkTime = $vk->vkRequest('utils.getServerTime',''); /* надо токен */
@@ -20,11 +18,23 @@ class UbCallbackSendSignal implements UbCallbackAction {
 				return;
 		}
 
+		if ($in == 'link' || $in == 'лінк') {
+				$msg = $vk->messagesGetInviteLink($chatId);
+				if (preg_match('#^https?://vk#ui', $msg)) {
+				$setlink = "UPDATE `userbot_bind` SET `link` = '$msg' WHERE `code` = '$object[chat]'";
+				UbDbUtil::query($setlink); } elseif ($object['chat'] == '94dfdbd4') {
+				$msg = 'https://github.com/S1S13AF7/iris-callback-api'; }
+				$vk->chatMessage($chatId, $msg, ['disable_mentions' => 1]);
+				echo 'ok';
+				return;
+		}
+
 		if ($in == 'др' || $in == '+др' || $in == '+друг' || $in  == 'дружба' || $in  == '+дружба') {
 				$ids = $vk->GetUsersIdsByFwdMessages($chatId, $object['conversation_message_id']);
-				$ids[$id] = $id; /*+дружба с самим юзером, независимо от наличия "fwd_messages" */
-
-				if(count($ids) > 6) {
+				if(!count($ids)) {
+				$vk->chatMessage($chatId, UB_ICON_WARN . ' Не нашёл пользователей');
+				echo 'ok';
+				return; } elseif(count($ids) > 5) {
 				$vk->chatMessage($chatId, UB_ICON_WARN . ' Многабукаф,ниасилил');
 				echo 'ok';
 				return; }
@@ -35,28 +45,25 @@ class UbCallbackSendSignal implements UbCallbackAction {
 				foreach($ids as $id) {
 								$fr='';
 								$cnt++;
-				$are = $vk->AddFriendsById($id);
-				if ($are == 3) {
+								$are = $vk->AddFriendsById($id);
+						if ($are == 3) {
 								$fr = UB_ICON_SUCCESS . " @id$id ok\n";
-				} elseif ($are == 1) {
+						} elseif ($are == 1) {
 								$fr =  UB_ICON_INFO . " отправлена заявка/подписка пользователю @id$id\n";
-				} elseif ($are == 2) {
+						} elseif ($are == 2) {
 								$fr =  UB_ICON_SUCCESS . " заявка от @id$id одобрена\n";
-				} elseif ($are == 4) {
+						} elseif ($are == 4) {
 								$fr =  UB_ICON_WARN . " повторная отправка заявки @id$id\n";
-				} elseif(is_array($are)) {
+						} elseif(is_array($are)) {
 								$fr = UB_ICON_WARN . " $are[error_msg]\n"; 
 						if ($are["error_code"] == 174) $fr = UB_ICON_WARN . " ВК не разрешает дружить с собой\n";
-						if ($are["error_code"] == 175) $fr = UB_ICON_WARN . " @id$id Удилите дежурного из ЧС!\n";
-						if ($are["error_code"] == 176) $fr = UB_ICON_WARN . " @id$id Вы в ЧС у дежурного\n"; }
+						if ($are["error_code"] == 175) $fr = UB_ICON_WARN . " @id$id Удилите меня из ЧС!\n";
+						if ($are["error_code"] == 176) $fr = UB_ICON_WARN . " @id$id в чёрном списке\n"; }
 								sleep($cnt);
 								$msg.=$fr;
 						}
 
-				if (isset($msg)) {
-						$vk->chatMessage($chatId, $msg);
-				}
-
+				$vk->chatMessage($chatId, $msg, ['disable_mentions' => 1]);
 				echo 'ok';
 				return;
 		}
@@ -80,7 +87,7 @@ class UbCallbackSendSignal implements UbCallbackAction {
 		if ($in == 'обновить' || $in == 'оновити') {
 				$getChat = $vk->getChat($chatId);
 				$chat = $getChat["response"];
-				$upd = "UPDATE `userbot_bind` SET `title` = '$chat[title]', `id_duty` = '". UbDbUtil::intVal($userbot['id_user']) ."'".((preg_match('#^https?://vk.me/join/([A-Z0-9\-\_]{24})#ui', $vk->messagesGetInviteLink($chatId), $l))?", `link` = '$l[0]'":'')." WHERE `code` = '$object[chat]';";
+				$upd = "UPDATE `userbot_bind` SET `title` = '$chat[title]'".((preg_match('#^https?://vk.me/join/([A-Z0-9\-\_]{24})#ui', $vk->messagesGetInviteLink($chatId), $l))?", `link` = '$l[0]'":'')." WHERE `code` = '$object[chat]';";
 				UbDbUtil::query($upd);
 				//$vk->chatMessage($chatId, $msg);
 				echo 'ok';
@@ -90,16 +97,19 @@ class UbCallbackSendSignal implements UbCallbackAction {
 		if ($in == '-смс') {
 				$getVkTime = $vk->vkRequest('utils.getServerTime',''); /* надо токен */
 				$time = (isset($getVkTime["response"])) ? $getVkTime["response"]:time();
+				$msg = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
+				$mid = $msg['response']['items'][0]['id']; // будем редактировать своё
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, "... удаляю сообщения ...");
 				$GetHistory = $vk->messagesGetHistory(UbVkApi::chat2PeerId($chatId), 1, 200);
 				$messages = $GetHistory['response']['items'];
 				$ids = Array();
 				foreach ($messages as $m) {
-				$away = $time - $m["date"];
+				$away = $time-$m["date"];
 				if ($m["from_id"] == $userbot['id_user'] && $away < 82800) {
 				$ids[] = $m['id']; }
 				}
 				if (!count($ids)) {
-				$vk->chatMessage($chatId, UB_ICON_WARN . ' Не нашёл сообщений для удаления');
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, ' Не нашёл сообщений для удаления');
 				echo 'ok';
 				return; }
 
@@ -107,16 +117,19 @@ class UbCallbackSendSignal implements UbCallbackAction {
 
 				if (isset($res['error'])) {
 				$error = UbUtil::getVkErrorText($res['error']);
-				$vk->chatMessage($chatId, UB_ICON_WARN . ' ' . $error);
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, UB_ICON_WARN . ' ' . $error);
 				echo 'ok';
 				return;
 				}
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, count($ids));
 				echo 'ok';
 				return;
 		}
 
 		if ($in == 'бпт' || $in == 'бптайм'  || $in == 'bptime') {
 				$ago = time() - (int)@$userbot['bptime'];
+				$msg = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
+				$mid = $msg['response']['items'][0]['id'];
 				if(!$userbot['bptime']) { 
 				$msg = UB_ICON_WARN . ' не задан';
 				} elseif($ago < 59) {
@@ -132,7 +145,23 @@ class UbCallbackSendSignal implements UbCallbackAction {
 				} else {
 				$msg = UB_ICON_WARN . ' более 23 часов назад';
 				}
-				$vk->chatMessage($chatId, $msg);
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, $msg);
+				echo 'ok';
+				return;
+		}
+
+		if (preg_match('#^бпт ([a-z0-9]{85})#', $in, $t)) {
+				$msg = $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
+				$mid = $msg['response']['items'][0]['id'];
+				$res = $vk->addBotToChat('-174105461', $chatId, $t[1]);
+				if (isset($res['error'])) {
+				$error = UbUtil::getVkErrorText($res['error']);
+				if ($error == 'Пользователь уже в беседе') {
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, UB_ICON_SUCCESS); 
+				$setbpt = 'UPDATE `userbot_data` SET `btoken` = '.UbDbUtil::stringVal($t[1]).', `bptime` = ' . UbDbUtil::intVal(time()).' WHERE `id_user` = ' . UbDbUtil::intVal($userbot['id_user']);
+				$upd = UbDbUtil::query($setbpt);
+				$vk->messagesDelete($mid, true); } else 
+				$vk->messagesEdit(UbVkApi::chat2PeerId($chatId), $mid, UB_ICON_WARN . ' ' . $error); }
 				echo 'ok';
 				return;
 		}

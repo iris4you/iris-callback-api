@@ -9,16 +9,21 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 
-CREATE TABLE `userbot_bind` (
+CREATE TABLE IF NOT EXISTS `userbot_bind` (
   `id_user` int(11) NOT NULL,
   `code` varchar(8) NOT NULL,
   `id_chat` int(11) NOT NULL,
+  `id_duty` int(11) NOT NULL DEFAULT '0',
+  `title` varchar(64) NOT NULL DEFAULT '',
+  `link` varchar(64) NOT NULL DEFAULT '',
   PRIMARY KEY (`id_user`,`code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `userbot_data` (
+CREATE TABLE IF NOT EXISTS `userbot_data` (
   `id_user` int(11) NOT NULL,
   `token` text NOT NULL,
+  `btoken` text NOT NULL DEFAULT '',
+  `bptime` int(11) NOT NULL DEFAULT '0',
   `secret` varchar(32) NOT NULL,
   PRIMARY KEY (`id_user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;

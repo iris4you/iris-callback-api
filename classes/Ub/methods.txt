@@ -7,5 +7,6 @@ subscribeSignals			Ub.Callback.Bind
 deleteMessages				Ub.Callback.DeleteMessages
 printBookmark				Ub.Callback.PrintBookmark
 forbiddenLinks				Ub.Callback.ForbiddenLinks
+sendMySignal					Ub.Callback.SendMySignal
 sendSignal					Ub.Callback.SendSignal
 hireApi						Ub.Callback.HireApi

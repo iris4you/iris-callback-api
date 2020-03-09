@@ -11,7 +11,7 @@ class UbCallbackAddUser implements UbCallbackAction {
 
 		require_once(CLASSES_PATH . "Ub/VkApi.php");
 		$vk = new UbVkApi($userbot['token']);
-		$res = $vk->messagesAddChatUser($object['user_id'], $chatId);
+		$res = $vk->messagesAddChatUser($object['user_id'], $chatId, @$userbot['btoken']);
 		if (isset($res['error'])) {
 			$peerId = UbVkApi::chat2PeerId($chatId);
 			$error = UbUtil::getVkErrorText($res['error']);
