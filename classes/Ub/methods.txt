@@ -1,3 +1,4 @@
+#методы:					Ub.Callback.метод
 #confirm					Ub.Callback.Confirm
 ping						Ub.Callback.Ping
 banExpired					Ub.Callback.AddUser
@@ -5,7 +6,16 @@ addUser						Ub.Callback.AddUser
 bindChat					Ub.Callback.Bind
 subscribeSignals			Ub.Callback.Bind
 deleteMessages				Ub.Callback.DeleteMessages
-printBookmark				Ub.Callback.PrintBookmark
+#deleteMessagesFromUser			Ub.Callback.DeleteFromUser
+#messages.deleteByType			Ub.Callback.DeleteByType
+#messages.recogniseAudioMessage		Ub.Callback.RAudioMessage
+#groupbots.invited			Ub.Callback.GroupInvited
+#printBookmark				Ub.Callback.PrintBookmark
 forbiddenLinks				Ub.Callback.ForbiddenLinks
+#meetChatDuty					Ub.Callback.ChatDuty
+#lpSendMySignal					Ub.Callback.LpMySignal
+#sendMySignal					Ub.Callback.SendMySignal
+#lpSendSignal					Ub.Callback.LpLdSignal
 sendSignal					Ub.Callback.SendSignal
+#Pathogen					Ub.Callback.Pathogen
 hireApi						Ub.Callback.HireApi
