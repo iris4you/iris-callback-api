@@ -4,6 +4,7 @@ class UbCallbackDeleteMessages implements UbCallbackAction {
 
 		$chatId = UbUtil::getChatId($userId, $object, $userbot, $message);
 		$localIds = $object['local_ids'];
+		$silent = (bool)@$object["silent"];
 		$vk = new UbVkApi($userbot['token']);
 
 		if (!count($localIds)) {
@@ -43,7 +44,11 @@ class UbCallbackDeleteMessages implements UbCallbackAction {
 			echo 'ok';
 			return;
 		}
-		$vk->chatMessage($chatId, UB_ICON_SUCCESS . ' Сообщения удалены');
+
+		if(!$silent) {
+			$vk->chatMessage($chatId, UB_ICON_SUCCESS . ' Сообщения удалены');
+		}
+
 		echo 'ok';
 	}
 }
