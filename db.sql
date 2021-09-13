@@ -9,17 +9,28 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 
-CREATE TABLE `userbot_bind` (
-  `id_user` int(11) NOT NULL,
-  `code` varchar(8) NOT NULL,
-  `id_chat` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `userbot_bind` (
+  `id_user` int(11) NOT NULL DEFAULT 0,
+  `code` varchar(8) NOT NULL DEFAULT '',
+  `id_chat` int(11) NOT NULL DEFAULT 0,
+  `id_duty` int(11) NOT NULL DEFAULT 0,
+  `title` text NOT NULL DEFAULT '',
   PRIMARY KEY (`id_user`,`code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
+--
+-- Структура таблиці `userbot_data`
+--
+
 CREATE TABLE `userbot_data` (
-  `id_user` int(11) NOT NULL,
-  `token` text NOT NULL,
-  `secret` varchar(32) NOT NULL,
+  `id_user` int(11) NOT NULL DEFAULT 0,
+  `token` text NOT NULL DEFAULT '',
+  `btoken` text NOT NULL DEFAULT '',
+  `ctoken` text NOT NULL DEFAULT '',
+  `mtoken` text NOT NULL DEFAULT '',
+  `bptime` int(11) UNSIGNED NOT NULL DEFAULT 0,
+  `secret` varchar(100) NOT NULL DEFAULT '',
+  `access` text NOT NULL DEFAULT '',
   PRIMARY KEY (`id_user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 COMMIT;
