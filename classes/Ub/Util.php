@@ -4,7 +4,7 @@ define('UB_ICON_WARN', "⚠️");
 define('UB_ICON_SUCCESS', "✅");
 define('UB_ICON_SUCCESS_OFF', "❎");
 define('UB_ICON_NOTICE', "📝");
-define('UB_ICON_INFO', "🗓");
+define('UB_ICON_INFO', "ℹ️");
 define('UB_ICON_DANGER', "📛");
 define('UB_ICON_COMMENT', "💬");
 define('UB_ICON_CONFIG', "⚙️");

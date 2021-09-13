@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `userbot_bind` (
 -- Структура таблиці `userbot_data`
 --
 
-CREATE TABLE `userbot_data` (
+CREATE TABLE IF NOT EXISTS `userbot_data` (
   `id_user` int(11) NOT NULL DEFAULT 0,
   `token` text NOT NULL DEFAULT '',
   `btoken` text NOT NULL DEFAULT '',
