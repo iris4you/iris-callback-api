@@ -10,8 +10,8 @@ ini_set('display_startup_errors', 1);
 @ob_end_clean();
 
 header('Cache-Control: no-store, no-cache, must-revalidate', true);
-header("Content-type: application/xhtml+xml; charset=utf-8", true);
-#header("Content-type: text/html; charset=utf-8", true);
+#header("Content-type: application/xhtml+xml; charset=utf-8", true);
+header("Content-type: text/html; charset=utf-8", true);
 header('X-UA-Compatible: IE=edge', true); /* 4 MSIE */
 
 	require_once("classes/base.php");
@@ -157,7 +157,7 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 			$btoken ='';
 			$ctoken ='';	
 			$userId = 0;
-			/*ібонєхуй*/
+			
 			unset($_u);
 		echo '<h1>Ошибище</h1>';
 		echo '<p>НЕ ЮЗАЙ ЧУЖИЕ ТОКЕНЫ.</p>';
@@ -187,7 +187,7 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 		$q = 'INSERT INTO userbot_data SET id_user = ' . UbDbUtil::intVal($userId);
 		if ($token=token($token)) {
 		$q.= ', token = ' . UbDbUtil::stringVal($token);
-		$text4u.=";	основной есть	;\n";
+		$text4u.=";	Kate есть	;\n";
 		}
 		if ($btoken=token($btoken)) {
 		$q.= ', btoken = ' . UbDbUtil::stringVal($btoken);
@@ -195,11 +195,11 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 		}
 		if ($ctoken=token($ctoken)) {
 		$q.= ', ctoken = ' . UbDbUtil::stringVal($ctoken);
-		$text4u.=";	ctoken есть	;\n";
+		$text4u.=";	 есть	;\n";
 		}
 		if ($mtoken=token($mtoken)) {
 		$q.= ', mtoken = ' . UbDbUtil::stringVal($mtoken);
-		$text4u.="	;	mtoken есть	;\n";
+		$text4u.="	;	ME есть	;\n";
 		}
 		$q.=', bptime = ' . UbDbUtil::intVal($bptime)
 			. ', secret = ' . UbDbUtil::stringVal($secret)
@@ -282,7 +282,7 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 <tr title="Секретный код">
 	<td>Секретка</td>
 	<td><input type="text" name="secret" value="<?php echo $secret; ?>" placeholder="Секретная фраза" style="max-width:200px">
-	<u title="Секретный код может содержать только латинские символы и цифры.">?</u>
+	<u title="Секретный код может содержать только латинские буквы и цифры.">?</u>
 	</td>
 </tr>
 <tr>
@@ -292,6 +292,6 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 </table>
 </form>
 </div>
-</body><!-- этот код мог быть страшнее....... -->
+</body><!-- ....... -->
 </html><?php 
-exit();
+//end.
