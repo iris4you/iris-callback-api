@@ -41,7 +41,132 @@ class UbCallbackLpLdSignal implements UbCallbackAction {
 			return;
 		}
 
-		$vk->chatMessage($chatId,'Мне прислали сигнал. От '.$tag,['disable_mentions'=>1]);
+		/* ping служебный сигнал для проверки работоспособности бота */
+		if ($in == 'ping' || $in == 'пинг' || $in == 'пінг' || $in == 'пінґ') {
+				#$time = $vk->getTime(); /* ServerTime — текущее время сервера ВК */ sleep(0.3);
+				$mess= $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
+				$r_t = (int)$mess['response']['items'][0]['id']; 
+				$opt = ($r_t)?['reply_to'=>$r_t]:['disable_mentions'=>1];
+				$pong = "PONG!\n " . ($time - $message['date']) . " сек";
+				if ((int)@$object['from_id'] == (int)$userId && $r_t > 0) {
+				$edit = $vk->messagesEdit($message['peer_id'],$r_t,$pong);
+				if(!isset($edit['error'])) { return; }
+				}
+				$send = $vk->chatMessage($chatId, $pong, $opt);
+				return;
+		}
+
+		if(!$CanCtrl) {
+				$mess= $vk->messagesGetByConversationMessageId(UbVkApi::chat2PeerId($chatId), $object['conversation_message_id']);
+				$r_t = (int)@$mess['response']['items'][0]['id']; 
+				$opt = ($r_t)?['reply_to'=>$r_t]:['disable_mentions'=>1];
+				//$pong = '!ПОГОДА НАХУЙ';#отличная идея (нет);
+				$pong = UB_ICON_WARN." у {$tag} нет доступа\n".
+				UB_ICON_INFO." Команды кроме пинга запрещены.";
+				$send = $vk->chatMessage($chatId, $pong, $opt);
+			return;
+		}
+
+		if ($in == '-смс') {
+				$GetHistory = $vk->messagesGetHistory(UbVkApi::chat2PeerId($chatId), 1, 200);
+				$messages = $GetHistory['response']['items'];
+				$ids = Array();
+				foreach ($messages as $m) {
+				$away = $time - $m["date"];
+				if ((int)$m["from_id"] == $userId && $away < 84000 && !isset($m["action"])) {
+				$ids[] = $m['id']; }
+				}
+				if (!count($ids)) {
+				#$vk->chatMessage($chatId, UB_ICON_WARN . ' Не нашёл сообщений для удаления');
+				return; }
+
+				$res = $vk->messagesDelete($ids, true);
+
+				return;
+		}
+
+		if (preg_match('#^-смс ([0-9]{1,3})#', $in, $c)) {
+				$amount = (int)@$c[1];
+				$GetHistory = $vk->messagesGetHistory(UbVkApi::chat2PeerId($chatId), 1, 200);
+				$messages = $GetHistory['response']['items'];
+				$ids = Array();
+				foreach ($messages as $m) {
+				$away = $time - $m["date"];
+				if ((int)$m["from_id"] == $userId && $away < 84000 && !isset($m["action"])) {
+				$ids[] = $m['id']; 
+				if ($amount && count($ids) >= $amount) break;				}
+				}
+				if (!count($ids)) {
+				#$vk->chatMessage($chatId, UB_ICON_WARN . ' Не нашёл сообщений для удаления');
+				return; }
+
+				$res = $vk->messagesDelete($ids, true);
+
+				return;
+		}
+
+		if ($in == 'бпт' || $in == 'бптайм'  || $in == 'bptime') {
+				$ago = time() - (int)@$userbot['bptime'];
+				if(!$userbot['bptime']) { 
+				$msg = UB_ICON_WARN . ' не задан';
+				} elseif($ago < 59) {
+				$msg = "$ago сек. назад";
+				} elseif($ago / 60 > 1 and $ago / 60 < 59) {
+				$min = floor($ago / 60 % 60);
+				$msg = $min . ' минут' . self::number($min, 'а', 'ы', '') . ' назад';
+				} elseif($ago / 3600 > 1 and $ago / 3600 < 23) {
+				$min = floor($ago / 60 % 60);
+				$hour = floor($ago / 3600 % 24);
+				$msg = $hour . ' час' . self::number($hour, '', 'а', 'ов') . ' и ' .
+				$min . ' минут' . self::number($min, 'а', 'ы', '') . ' тому назад';
+				} else {
+				$msg = UB_ICON_WARN . ' более 23 часов назад';
+				/*$vk->SelfMessage("$msg");*/ sleep(1); }
+				$vk->chatMessage($chatId, $msg);
+				return;
+		}
+
+		if (preg_match('#^(Iris|Ирис) в ([0-9]+)#ui', $in, $c)) {
+				$res = $vk->addBotToChat('-174105461', $c[2], @$userbot['btoken']);
+				if (isset($res['error'])) {
+				$error = UbUtil::getVkErrorText($res['error']);
+				$vk->chatMessage($chatId, UB_ICON_WARN . ' ' . $error); }
+				return;
+		}
+
+		if (preg_match('#^(добавь|верни) в ([a-z0-9]{8})#ui', $in, $c)) {
+				$toChat = UbDbUtil::selectOne('SELECT * FROM userbot_bind WHERE id_user = ' . UbDbUtil::intVal($userId) . ' AND code = ' . UbDbUtil::stringVal($c[2]));
+
+		if(!$toChat) {
+				$vk->chatMessage($chatId,  UB_ICON_WARN . ' no bind chat ' . $c[2]);
+				return; }
+
+				$res = $vk->messagesAddChatUser($object['from_id'], $toChat['id_chat'], @$userbot['btoken']);
+		if (isset($res['error'])) {
+				$error = UbUtil::getVkErrorText($res['error']);
+				$vk->chatMessage($chatId, UB_ICON_WARN . ' ' . $error);
+				}
+
+				return;
+
+		}
+
+		/* повтор текста */
+		if (preg_match('#(повтори|скажи|напиши|патоген|пп|ген|кмд|ферма|лаб|связать|api)(.*)#ui',$message['text'],$t)) {
+				#$txt=($CanCtrl)?$t[2]: UB_ICON_INFO . " @id$id просит сказать:\n".self::substr($t[2],256,0,'…');
+				$opt=['disable_mentions' => 1, 'dont_parse_links' => 1]; $txt='';
+				if (preg_match('#(повтори|скажи|напиши|кмд)\n(.+)#ui',$message['text'],$t)) { $txt=$t[2]; }
+				if (preg_match('#лаб|патоген#ui',$message['text'])) {	$txt = '.с патоген';	}
+				if (preg_match('#(пп|ген|патоген) (.{2,42})#ui', $message['text'], $p)) {	$txt = "!с $p[0]";	}
+				if (preg_match('#-игра|-биоигра|передать#ui',$message['text'])){$txt=UB_ICON_INFO." @id$id хочет в скам";	}
+				if (preg_match('#api|дежурный#ui',$message['text'])){ $txt=UB_ICON_INFO." напиши нанять 666 @id$userId"; }
+				if (preg_match('#связать#ui',$message['text'])) {	$txt = '!связать';	}
+				/* список *preg* можно дополнять хоть вечность */
+				if ($txt!='')$vk->chatMessage($chatId,$txt,$opt); 
+				return;
+		}
+
+		$vk->chatMessage($chatId,'Мне прислали сигнал. От пользователя '.$tag,['disable_mentions'=>1]);
     }
 
     static function for_name($text) {
