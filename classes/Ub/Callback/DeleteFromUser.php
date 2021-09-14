@@ -1,5 +1,6 @@
 <?php
 class UbCallbackDeleteFromUser implements UbCallbackAction {
+//upd:2020/11/30
 
 	function closeConnection() {
 		@ob_end_clean();

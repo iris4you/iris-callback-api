@@ -1,5 +1,5 @@
 <?php
-
+//upd:2021/09/14
 define('VK_API_VERSION', '5.131');
 
 define('VK_BOT_ERROR_UNKNOWN', 1);

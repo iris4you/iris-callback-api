@@ -18,6 +18,7 @@ class UbCallbackAddUser implements UbCallbackAction {
 			$vk->messagesSend($peerId, UB_ICON_WARN . ' ' . $error);
 		}
 
+		//upd:2020/05/21
 		echo 'ok';
 	}
 }
