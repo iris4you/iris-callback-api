@@ -92,30 +92,16 @@ class UbUtil {
 			return $chat['id_chat'];
 		}
 		$vk = new UbVkApi($userbot['token']);
-		$result = $vk->messagesGetConversations();
+		$result = $vk->messagesSearch($message['text'], $peerId = null, $count = 10);
 		if (isset($result['error'])) {
 			return UbUtil::errorVkResponse($result['error']);
 		}
-		$result = $result['response'];
-		$goodChats = self::findChats($result['items'], $message);
 		$userChatId = 0;
-		if ($goodChats['sure']) {
-			$userChatId = UbVkApi::peer2ChatId($goodChats['items'][0]['peer_id']);
-		} else {
-			foreach ($goodChats['items'] as $chat) {
-				$result = $vk->messagesGetHistory($chat['peer_id'], 0, 100);
-				if (isset($result['error'])) {
-					return UbUtil::errorVkResponse($result['error']);
-				}
 				foreach ($result['response']['items'] as $item) {
 					if (self::isMessagesEqual($item, $message)) {
 						$userChatId = UbVkApi::peer2ChatId($item['peer_id']);
 					}
 				}
-				if ($userChatId)
-					break;
-			}
-		}
 
 		if ($userChatId) {
 			$t = ['id_user' => $userId, 'code' => $object['chat'], 'id_chat' => $userChatId];
