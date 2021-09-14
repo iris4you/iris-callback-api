@@ -24,7 +24,7 @@ header('X-UA-Compatible: IE=edge', true); /* 4 MSIE */
 	$small = 'abcdefghijklmnopqrstuvwxyz';
 	$large = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	$numbers = '1234567890';
-		for ($i = 0; $i < $len; $i++) {
+	for ($i = 0; $i < $len; $i++) {
         switch (mt_rand(1, 3)) {
             case 3 :
                 $password .= $large [mt_rand(0, 25)];
@@ -107,16 +107,11 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 	$method = 'apps.get';
 	$body['access_token'] = $t;
 
-	$a=$k->curl_proxy("https://api.vk.com/method/".$method,$body); sleep(0.42);
+	$a=$k->curl("https://api.vk.com/method/".$method,$body); sleep(0.42);
 	if(isset($a["response"]["items"][0])) {
 		$app=$a["response"]["items"][0];
 		$app_id=(int)@$app['id'];
 		$app_nm=(string)@$app["title"];
-		$text4u.="нашли токен {$app_id} {$app_nm}";
-		if(!isset($UbVkAps[$app_id])){
-		$text4u.=",но он нам не подоходит";
-		unset($d[$k]);
-		} else {
 		if ($app_id==6146827) {
 				$mtoken = $t;
 		}//VKME
@@ -129,24 +124,16 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 		if ($app_id==2685278) {
 				$token = $t;
 		}//Kate
-		$me = Array();
-		//$ua = (isset($HTTPUSERAGRNT[$app_id])?(string)@$HTTPUSERAGRNT[$app_id]:False);
-		$method = 'users.get';
-		if ($app_id==6146827 || $app_id==5027722) {
-				$me=$k->curl_ME("https://api.vk.com/method/".$method,$body,null,true); sleep(0.42);
-		} else {
-				$me=$k->curl_proxy("https://api.vk.com/method/".$method,$body); sleep(0.42);
-		}
+		
+		$me=$k->usersGet();
+
 		if (isset($me['response'][0]['id'])){
 				$userId = (int)@$me['response'][0]['id'];
 		if ($userId) {
 				$_u[$userId][$app_id]=$t; 
 		}//$_u[$userId][$app_id]=$t; 
 		}//$me['response'][0]['id']
-				
-		}//isset($UbVkAps[$app_id])
-		
-	}
+	}//isset($a["response"]["items"][0]
 		$text4u.="\n<br/>\n";
 	}//foreach($d as $k => $t)
 	if (isset($_u[0])) {
@@ -185,6 +172,7 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 		$ctoken= (isset($_u[$userId][7362610]))?$_u[$userId][7362610]:'';
 		
 		$q = 'INSERT INTO userbot_data SET id_user = ' . UbDbUtil::intVal($userId);
+		$q.= ', access = ' . UbDbUtil::intVal($userId);
 		if ($token=token($token)) {
 		$q.= ', token = ' . UbDbUtil::stringVal($token);
 		$text4u.=";	Kate есть	;\n";
@@ -195,7 +183,7 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 		}
 		if ($ctoken=token($ctoken)) {
 		$q.= ', ctoken = ' . UbDbUtil::stringVal($ctoken);
-		$text4u.=";	 есть	;\n";
+		$text4u.=";	ctoken есть	;\n";
 		}
 		if ($mtoken=token($mtoken)) {
 		$q.= ', mtoken = ' . UbDbUtil::stringVal($mtoken);
@@ -272,13 +260,13 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 	  target="_blank" rel="external">»</a>
 	</td>
 </tr>
-<tr title="Нужен только для ковид статуса. Можно оставить пустым.">
+<!-- <tr title="Нужен только для ковид статуса. Можно оставить пустым.">
 	<td>Covid-19</td>
 	<td><input type="text" name="ctoken" value="" placeholder="Токен" style="max-width:200px">
 	<a href="https://oauth.vk.com/authorize?client_id=7362610&redirect_uri=https://oauth.vk.com/blank.html&display=mobile&response_type=token&revoke=1"
 	  target="_blank" rel="external">»</a>
 	</td>
-</tr>
+</tr> -->
 <tr title="Секретный код">
 	<td>Секретка</td>
 	<td><input type="text" name="secret" value="<?php echo $secret; ?>" placeholder="Секретная фраза" style="max-width:200px">
@@ -292,6 +280,6 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 </table>
 </form>
 </div>
-</body><!-- ....... -->
+</body>
 </html><?php 
 //end.
