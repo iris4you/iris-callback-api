@@ -1,6 +1,6 @@
 <?php
 class UbCallbackSendMySignal implements UbCallbackAction {
-//upd:2021/09/12
+
 	function closeConnection() {
 		@ob_end_clean();
 		@header("Connection: close");
