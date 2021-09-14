@@ -126,6 +126,18 @@ class UbVkApi {
 		return $this->vkRequest('messages.delete', http_build_query($options));
 	}
 
+	function messagesEdit($peerId, $message_id, $message, $options = []) {
+		$add = '';
+		$mid = (int) $message_id;
+		if ($mid == 0)
+			return false;
+		if ($options)
+			foreach ($options as $k => $val)
+				$add .= '&' . urlencode($k) . '=' . urlencode($val);
+		$res = $this->vkRequest('messages.edit', 'random_id=' . mt_rand(0, 2000000000) . '&peer_id=' . $peerId . "&message=".urlencode($message) . "&message_id=" . $mid . $add);
+		return $res;
+	}
+
 	public function messagesPin($peerId, $message_id) {
 		if ($peerId < 2000000000) $peerId+=2000000000;
 		$res = $this->vkRequest('messages.pin', 'peer_id=' . (int) $peerId . "&message_id=" . (int) $message_id);
