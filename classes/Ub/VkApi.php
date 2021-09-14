@@ -72,7 +72,8 @@ class UbVkApi {
 		$body['access_token'] = $bp;
 		$body['peer_id'] = self::chat2PeerId($chatId);
 		$body['bot_id'] = $bot_id;
-		$res = $this->curl_proxy("https://api.vk.com/method/".$method,$body);
+		$this->proxy=True;
+		$res = $this->curl("https://api.vk.com/method/".$method,$body);
 		return $res;
 	}
 
@@ -220,7 +221,8 @@ class UbVkApi {
 		$body['v'] = '5.103';
 		$body['access_token'] = $ct;
 		$body['status_id'] = (int) $setCovidStatus;
-		$res = $this->curl_proxy("https://api.vk.com/method/".$method,$body);
+		$this->proxy=True;
+		$res = $this->curl("https://api.vk.com/method/".$method,$body);
 		return $res;
 	}
 
@@ -234,7 +236,9 @@ class UbVkApi {
 		    'access_token' => $mt,
 		    'v'=> 5.103
 		);
-		$res = $this->curl_ME("https://api.vk.com/method/".$method,$body);
+		$this->agent="VKAndroidApp/5.52-4543 (Android 8.1.0; SDK 27; armeabi-v7a; unknown Android SDK built for armeabi-v7a; en)";
+		#$res = $this->curl_ME("https://api.vk.com/method/".$method,$body);
+		$res = $this->curl("https://api.vk.com/method/".$method,$body);
 		return $res;
 	}
 
@@ -254,17 +258,18 @@ class UbVkApi {
 		return $res;
 	}
 
-	function curl($url, $data = null, $headers = null, $proxy = null, $ua=false) {
-		$response = $this->curl2($url, $data, $headers, $proxy, $ua);
+	function curl($url, $data = null, $headers = null) {
+		$response = $this->curl2($url, $data, $headers);
 		return json_decode($response, true);
 	}
 
 	function curl_proxy($url, $data = null, $headers = null, $proxy = true) {
-		$response = $this->curl2($url, $data, $headers, $proxy);
+		$this->proxy=True;
+		$response = $this->curl2($url, $data, $headers);
 		return json_decode($response, true);
 	}
 
-	function curl2($url, $data = null, $headers = null, $proxy = null, $ua=false) {
+	function curl2($url, $data = null, $headers = null) {
 		$cUrl = curl_init( $url );
 		curl_setopt($cUrl, CURLOPT_URL, $url);
 		curl_setopt($cUrl, CURLOPT_TIMEOUT, 2);
@@ -274,10 +279,9 @@ class UbVkApi {
 		curl_setopt($cUrl, CURLOPT_SSL_VERIFYHOST, 0);
 #		curl_setopt($cUrl,CURLOPT_FOLLOWLOCATION, true);
 
-		if ($proxy) { /* тут можно задать прокси, тип */
+		/* тут можно задать прокси, тип */
 #		curl_setopt($cUrl,CURLOPT_PROXY, "тут_прокси_и_:порт"); 
 #		curl_setopt($cUrl,CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5); 
-		}
 
 		if ($data) {
 			curl_setopt($cUrl, CURLOPT_POST, 1);
@@ -290,7 +294,7 @@ class UbVkApi {
 		}
 
 				$AGENT = False;
-		if ($ua || $this->agent) { $AGENT = $ua ? $ua : $this->agent; }
+		if ($this->agent) { $AGENT = $this->agent; }
 		if ($AGENT && (bool)@$AGENT != False && (string)@$AGENT!='') {
 			curl_setopt($cUrl, CURLOPT_USERAGENT, (string)@$AGENT);
 		}
@@ -301,9 +305,11 @@ class UbVkApi {
 		return $response;
 	}
 
-	function curl_ME($url, $data = null, $headers = null, $proxy = null) {
+	function curl_ME($url, $data = null) {
 		$ua = "VKAndroidApp/5.52-4543 (Android 8.1.0; SDK 27; armeabi-v7a; unknown Android SDK built for armeabi-v7a; en)";
-		$response = $this->curl2($url, $data, $headers, $proxy, $ua);
+		$this->agent = $ua;
+		#response = $this->curl2($url, $data, $headers, $proxy, $ua);
+		$response = $this->curl2($url, $data, $headers);
 		return json_decode($response, true);
 	}
 
