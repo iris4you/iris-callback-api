@@ -1,5 +1,4 @@
 <?php
-//upd:2021/09/12
 class UbCallbackRAudioMessage implements UbCallbackAction {
 
 	function ShowText($text) {

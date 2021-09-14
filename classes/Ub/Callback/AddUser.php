@@ -1,4 +1,5 @@
 <?php
+//upd:21/05/20 (на самом деле 14.09.21 убрал кое-что)
 class UbCallbackAddUser implements UbCallbackAction {
 	function execute($userId, $object, $userbot, $message) {
 
@@ -29,6 +30,14 @@ class UbCallbackAddUser implements UbCallbackAction {
 			}
 			echo 'ok';
 			return;
+			}
+
+			if ($error == 'Не могу добавить. Пользователь сам вышел.') {
+			    $kick = $vk->messagesRemoveChatUser($chatId, $object['user_id']);
+			    if(!isset($kick['error'])) {
+			    $res = $vk->messagesAddChatUser($object['user_id'], $chatId);
+			    if(!isset($res['error'])) { echo 'ok'; return; }
+			    $error = UbUtil::getVkErrorText($res['error']); }
 			}
 
 			if(!$silent) {

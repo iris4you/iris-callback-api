@@ -1,5 +1,4 @@
 <?php
-//upd:2020/05/21
 class UbCallbackDeleteMessages implements UbCallbackAction {
 	function execute($userId, $object, $userbot, $message) {
 

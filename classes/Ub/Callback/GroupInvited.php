@@ -1,6 +1,6 @@
 <?php
 class UbCallbackGroupInvited implements UbCallbackAction {
-//upd:2020/07/12
+
 	function closeConnection() {
 		@ob_end_clean();
 		@header("Connection: close");
