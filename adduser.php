@@ -20,11 +20,11 @@ header('X-UA-Compatible: IE=edge', true); /* 4 MSIE */
 	require_once(CLASSES_PATH . "Ub/Util.php");
 
 	function passgen($len = 32) {
-    $password = '';
-    $small = 'abcdefghijklmnopqrstuvwxyz';
-    $large = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $numbers = '1234567890';
-    for ($i = 0; $i < $len; $i++) {
+	$password = '';
+	$small = 'abcdefghijklmnopqrstuvwxyz';
+	$large = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$numbers = '1234567890';
+		for ($i = 0; $i < $len; $i++) {
         switch (mt_rand(1, 3)) {
             case 3 :
                 $password .= $large [mt_rand(0, 25)];
@@ -36,34 +36,29 @@ header('X-UA-Compatible: IE=edge', true); /* 4 MSIE */
                 $password .= $numbers [mt_rand(0, 9)];
                 break;
         }
-    }
-    return $password;
+	}
+	return $password;
 	}
 
 	function token($data = ''){
 	$token = false;
-	if (preg_match('#([a-z0-9]{85})#', $data, $t)) {
+	if (preg_match('#([a-z0-9]{85})#ui', $data, $t)) {
 	$token = (string)$t[1]; }
 	return $token ? $token:'';
 	}
 	
+	function secret($data = ''){
+	$scode = false;
+	if (preg_match('#([a-z0-9]{8,50})#ui', $data, $s)) {
+	$scode = (string)$s[1]; }
+	return $scode ? $scode:passgen(mt_rand(8,20));
+	}
+	
 	$bptime = (int)time();
-	$secret = (isset($_POST['secret']))?(string)@$_POST['secret']:passgen(mt_rand(8, 32));
+	$secret = secret((string)@$_POST['secret']);
 	$text4u ='';
 	$userId = 0;
 	$_u=Array();
-	
-	if (preg_match('#([a-z0-9]{8,50})#', $secret, $s)) {
-	$secret = (string)$s[1]; } else {
-	if (strlen($secret) < 8) {
-		//echo '<h1>Ошибище</h1>';
-		//echo UB_ICON_NOTICE . ' Длина секрета должна быть не менее 8 символов';
-		$text4u.= UB_ICON_NOTICE . " Длина секрета должна быть не менее 8 символов.<br/>\n";
-		$secret = passgen(8);
-		$text4u.= "предлагаем {$secret}<br/>\n";
-		//return;
-	} else { $secret = passgen(mt_rand(8,32)); }
-	}
 	
 echo '<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head>
@@ -71,26 +66,23 @@ echo '<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="initial-scale=1,width=device-width" />
 <style type="text/css">
-	html, body, table, * { margin: 0 auto; }
-	html { background: transparent; color:#111; padding:1%; text-align: center; }
-	body { background: transparent; margin:auto; opacity: 0.9; padding: 8px; }
-	a:link, a:visited { color: darkblue; text-decoration: none; } a:hover { color: Green; } 
+	html, body, table, * { margin: 0 auto; text-align: center; }
+	body { background:transparent; margin: auto; padding: 8px; }
+	a:link, a:visited { color: darkblue; text-decoration:none; } 
+	a:hover { color: Green; } 
 </style></head><body style="margin:0px auto;max-width:800px;min-widht:100px;">
 <div style="margin: 0 auto; max-width: 600px; padding: 4% 0; border:#911 solid; opacity:0.9;"/>
 ';
 
 if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken']) || isset($_POST['ctoken'])) {
 
-	$token =  token(isset($_POST['token'])?@$_POST['token']:'');
-	$mtoken = token(isset($_POST['mtoken'])?@$_POST['mtoken']:'');
-	$btoken = token(isset($_POST['btoken'])?@$_POST['btoken']:'');
-	$ctoken = token(isset($_POST['ctoken'])?@$_POST['ctoken']:'');	
+	$token  = '';
+	$mtoken = '';
+	$btoken = '';
+	$ctoken = '';	
 	
 	$d = Array(); /* $_POST data */
-	$q = "INSERT INTO userbot_data SET id_user = "	; #начало запроса
-	$maintoken = False;
-	$maintoken = False;
-	
+
 	foreach($_POST as $k => $v){
 	/* перебираем всю форму*/
 	if (preg_match('#token#ui', $k) && $v=token($v)){
@@ -104,9 +96,7 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 		//return;
 	}
 	
-	$UbVkAps[2274003]=2274003;	# 'Android'
 	$UbVkAps[2685278]=2685278;	# 'Kate Mobile'
-	$UbVkAps[5027722]=5027722;	# 'VK Messenger'
 	$UbVkAps[6146827]=6146827;	# 'VKME'
 	$UbVkAps[6441755]=6441755;	# 'BotPod'
 	$UbVkAps[7362610]=7362610;	# 'Covid19'
@@ -128,19 +118,8 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 		unset($d[$k]);
 		} else {
 		if ($app_id==6146827) {
-		if ($maintoken == False) {
-				$maintoken=$app_nm;
-				$token = $t; }
 				$mtoken = $t;
 		}//VKME
-		if ($app_id==2274003 && $maintoken == False) {
-				$maintoken=$app_nm;
-				$token = $t;
-		}//VKAndroidApp
-		if ($app_id==5027722 && $maintoken == False) {
-				$maintoken=$app_nm;
-				$token = $t;
-		}//VK Messenger
 		if ($app_id==6441755) {
 				$btoken = $t;
 		}//BotPod
@@ -148,47 +127,40 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 				$ctoken = $t;
 		}//Covid
 		if ($app_id==2685278) {
-				$maintoken=$app_nm;
 				$token = $t;
 		}//Kate
-				$me = Array();
-				//$ua = (isset($HTTPUSERAGRNT[$app_id])?(string)@$HTTPUSERAGRNT[$app_id]:False);
-				$method = 'users.get';
-				
-				if ($app_id==6146827 || $app_id==5027722) {
+		$me = Array();
+		//$ua = (isset($HTTPUSERAGRNT[$app_id])?(string)@$HTTPUSERAGRNT[$app_id]:False);
+		$method = 'users.get';
+		if ($app_id==6146827 || $app_id==5027722) {
 				$me=$k->curl_ME("https://api.vk.com/method/".$method,$body,null,true); sleep(0.42);
-				} else {
+		} else {
 				$me=$k->curl_proxy("https://api.vk.com/method/".$method,$body); sleep(0.42);
-				}
-				if (isset($me['response'][0]['id'])){
+		}
+		if (isset($me['response'][0]['id'])){
 				$userId = (int)@$me['response'][0]['id'];
-				if ($userId) {
-				$_u[$userId]=$userId; }
-				}//$me['response'][0]['id']
+		if ($userId) {
+				$_u[$userId][$app_id]=$t; 
+		}//$_u[$userId][$app_id]=$t; 
+		}//$me['response'][0]['id']
 				
 		}//isset($UbVkAps[$app_id])
 		
 	}
 		$text4u.="\n<br/>\n";
 	}//foreach($d as $k => $t)
-	
-	if ($userId > 0 && $maintoken == False) {
-			$text4u.="\n<br/>..но не нашли токен, который бы подошел на роль основного.\n<br/>\n";
-			echo "\n<div>{$text4u}</div>\n";
-	} else {
-			$text4u.="\n<br/>.. {$maintoken} сойдёт на роль основного.\n<br/>\n";
-			print_r($_u);
-	if (count($_u) > 1) { $text4u="\n<br/>\НЕ ЮЗАЙ ЧУЖИЕ ТОКЕНЫ.\n<br/>\n";
+	if (isset($_u[0])) {
+			unset($_u[0]); }
+	if (count($_u) > 1){
 			$token = '';
 			$mtoken ='';
 			$btoken ='';
 			$ctoken ='';	
 			$userId = 0;
 			/*ібонєхуй*/
-			echo "\n<div>{$text4u}</div>\n";
-	} elseif (count($_u) < 1) {
-			$text4u.="\n<br/>\шото нето. повторить?\n<br/>\n"; 
-			echo "\n<div>{$text4u}</div>\n";
+			unset($_u);
+		echo '<h1>Ошибище</h1>';
+		echo '<p>НЕ ЮЗАЙ ЧУЖИЕ ТОКЕНЫ.</p>';
 	} elseif ($userId > 0) { /* если похоже на то, что всё ок, то.....*/	sleep(0.42);
 	
 		#$bptime = (int)time();
@@ -207,22 +179,27 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 			return;
 		}*/
 		
+		$token = (isset($_u[$userId][2685278]))?$_u[$userId][2685278]:'';
+		$mtoken= (isset($_u[$userId][6146827]))?$_u[$userId][6146827]:'';
+		$btoken= (isset($_u[$userId][6441755]))?$_u[$userId][6441755]:'';
+		$ctoken= (isset($_u[$userId][7362610]))?$_u[$userId][7362610]:'';
+		
 		$q = 'INSERT INTO userbot_data SET id_user = ' . UbDbUtil::intVal($userId);
 		if ($token=token($token)) {
 		$q.= ', token = ' . UbDbUtil::stringVal($token);
-		$text4u.='	;	основной есть	;	';
+		$text4u.=";	основной есть	;\n";
 		}
 		if ($btoken=token($btoken)) {
 		$q.= ', btoken = ' . UbDbUtil::stringVal($btoken);
-		$text4u.='	;	БП есть	;	';
+		$text4u.=";	БП есть	;\n";
 		}
 		if ($ctoken=token($ctoken)) {
 		$q.= ', ctoken = ' . UbDbUtil::stringVal($ctoken);
-		$text4u.='	;	ctoken есть	;	';
+		$text4u.=";	ctoken есть	;\n";
 		}
 		if ($mtoken=token($mtoken)) {
 		$q.= ', mtoken = ' . UbDbUtil::stringVal($mtoken);
-		$text4u.='	;	mtoken есть	;	';
+		$text4u.="	;	mtoken есть	;\n";
 		}
 		$q.=', bptime = ' . UbDbUtil::intVal($bptime)
 			. ', secret = ' . UbDbUtil::stringVal($secret)
@@ -243,18 +220,8 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 		$q.= ' bptime = VALUES(bptime)'
 			. ', secret = VALUES(secret)';
 		
-		/*//как-то я читал, что 
-		получаемым от юзеров данным
-		верить нельзя.
-		совсем.
-		никогда.
-		да?
-		*/
-		
-		//$text4u.="\n<br/>{$q}\n<br/>";
-		
 		if ($text4u) {
-			echo "\n<div>{$text4u}</div>\n";
+			echo "\n<!-- {$text4u} -->\n";
 		}
 
 		UbDbUtil::query("$q;");		unset($q);
@@ -271,13 +238,10 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 	;
 	return;
 	}//ok!?
-	
-			
 	}//userid
 	
-	
-	}
-	}//POST
+
+}//POST
 
 
 ?>
@@ -328,7 +292,6 @@ if (isset($_POST['token']) || isset($_POST['mtoken']) || isset($_POST['btoken'])
 </table>
 </form>
 </div>
-</body><!-- этот код мог быть еще страшнее....... -->
+</body><!-- этот код мог быть страшнее....... -->
 </html><?php 
 exit();
-?>
