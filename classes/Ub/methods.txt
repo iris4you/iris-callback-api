@@ -13,8 +13,8 @@ deleteMessages				Ub.Callback.DeleteMessages
 #printBookmark				Ub.Callback.PrintBookmark
 forbiddenLinks				Ub.Callback.ForbiddenLinks
 #meetChatDuty					Ub.Callback.ChatDuty
-#lpSendMySignal					Ub.Callback.LpMySignal
-#sendMySignal					Ub.Callback.SendMySignal
+#lpSendMySignal					Ub.Callback.SendSignal
+#sendMySignal					Ub.Callback.SendSignal
 #lpSendSignal					Ub.Callback.LpLdSignal
 sendSignal					Ub.Callback.SendSignal
 #Pathogen					Ub.Callback.Pathogen
